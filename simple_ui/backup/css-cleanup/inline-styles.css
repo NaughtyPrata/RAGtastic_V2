@@ -1,0 +1,4 @@
+/* Extracted inline styles from HTML */
+#user-message, #ai-message {
+    display: none;
+}

@@ -1,0 +1,68 @@
+/* 
+ * Custom dropdown styling with higher specificity selectors
+ * to avoid using !important declarations
+ */
+
+/* Apply these styles when the dropdown is open */
+html body select:focus {
+  outline: none;
+  box-shadow: 0 0 15px var(--crt-glow);
+}
+
+/* Force dropdown styling with higher specificity */
+html body .main-container select option,
+html body .side-panel select option,
+html body .center-panel select option,
+html body .query-controls select option {
+  background-color: var(--bg-terminal);
+  color: var(--pip-green);
+  padding: 8px;
+  border-bottom: 1px solid var(--pip-green);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Override browser default styling with higher specificity */
+html body .main-container select option:hover, 
+html body .main-container select option:focus,
+html body .main-container select option:active,
+html body .main-container select option:checked,
+html body .side-panel select option:hover,
+html body .side-panel select option:focus,
+html body .side-panel select option:active,
+html body .side-panel select option:checked,
+html body .center-panel select option:hover,
+html body .center-panel select option:focus,
+html body .center-panel select option:active,
+html body .center-panel select option:checked,
+html body .query-controls select option:hover,
+html body .query-controls select option:focus,
+html body .query-controls select option:active,
+html body .query-controls select option:checked {
+  background-color: var(--pip-dark-green);
+  color: var(--pip-green);
+  box-shadow: 0 0 10px var(--crt-glow);
+}
+
+/* Add this script to the page */
+document.addEventListener('DOMContentLoaded', function() {
+  // Find all selects and add our custom styling
+  const selects = document.querySelectorAll('select');
+  selects.forEach(select => {
+    select.addEventListener('mousedown', function(e) {
+      if(this.options.length > 5) {
+        this.size = 5;
+      } else {
+        this.size = this.options.length;
+      }
+    });
+    
+    select.addEventListener('blur', function(e) {
+      this.size = 0;
+    });
+    
+    select.addEventListener('change', function(e) {
+      this.size = 0;
+      this.blur();
+    });
+  });
+});

@@ -1,0 +1,134 @@
+/* RAGtastic Fallout/Vault-Tec Theme */
+
+:root {
+  /* Main colors */
+  --vault-yellow: #ffb400;
+  --vault-blue: #0a2463;
+  --vault-teal: #00585f;
+  --vault-green: #8bc34a;
+  --pip-green: #5ffd7e;
+  --pip-dark-green: #081f12;
+  --wasteland-brown: #6e5837;
+  --rust-red: #ff3333;
+  --steel-gray: #454d50;
+  --dark-metal: #1e2429;
+  --terminal-black: #0a0a0a;
+  --crt-glow: rgba(95, 253, 126, 0.5);
+
+  /* Text colors */
+  --text-primary: #c8cabe;
+  --text-secondary: #878e82;
+  --text-highlight: var(--pip-green);
+  --text-warning: var(--vault-yellow);
+  --text-danger: #ff4444;
+  
+  /* Background colors */
+  --bg-primary: #080a08;
+  --bg-secondary: #0e110e;
+  --bg-tertiary: #141a14;
+  --bg-terminal: #080c08;
+  --bg-card: #151b21;
+  --bg-highlight: #252d35;
+  
+  /* Border colors */
+  --border-primary: #1a231a;
+  --border-terminal: var(--pip-green);
+  --border-highlight: var(--vault-yellow);
+  
+  /* Status colors */
+  --status-success: var(--pip-green);
+  --status-warning: var(--vault-yellow);
+  --status-danger: var(--rust-red);
+  --status-info: var(--vault-blue);
+  
+  /* Border radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-inner: inset 0 1px 4px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 10px var(--crt-glow);
+}
+
+/* Body Background */
+body {
+  background-color: var(--bg-primary);
+  background-image: 
+    linear-gradient(to bottom, rgba(95, 253, 126, 0.05), rgba(0, 0, 0, 0) 10px),
+    linear-gradient(to top, rgba(95, 253, 126, 0.05), rgba(0, 0, 0, 0) 10px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-terminal);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--pip-dark-green);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pip-green);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 253, 126, 0.3);
+}
+
+/* Selection Styling */
+::selection {
+  background-color: var(--pip-green);
+  color: var(--bg-terminal);
+}
+
+/* Vault-Tec Terminal Specific Styles */
+.vault-terminal::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(0, 0, 0, 0.95) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(95, 253, 126, 0.05) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  z-index: -1;
+}
+
+/* Focus styles */
+*:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--pip-green);
+}
+
+/* Loading animations */
+@keyframes flicker {
+  0% { opacity: 1; }
+  10% { opacity: 0.8; }
+  20% { opacity: 1; }
+  30% { opacity: 0.9; }
+  40% { opacity: 1; }
+  50% { opacity: 0.7; }
+  60% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.loading {
+  animation: flicker 1s linear infinite;
+}

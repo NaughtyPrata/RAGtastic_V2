@@ -1,0 +1,68 @@
+/* Base Styles - Core resets and fundamentals */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+/* CSS Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base Element Styling */
+body {
+  font-family: 'Share Tech Mono', monospace;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--bg-primary);
+  background-image: 
+    linear-gradient(to bottom, rgba(95, 253, 126, 0.05), rgba(0, 0, 0, 0) 10px),
+    linear-gradient(to top, rgba(95, 253, 126, 0.05), rgba(0, 0, 0, 0) 10px);
+}
+
+/* Focus styles */
+*:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--pip-green);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-terminal);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--pip-dark-green);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pip-green);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 253, 126, 0.3);
+}
+
+/* Selection Styling */
+::selection {
+  background-color: var(--pip-green);
+  color: var(--bg-terminal);
+}
+
+/* Hidden elements */
+#user-message, #ai-message {
+  display: none;
+}

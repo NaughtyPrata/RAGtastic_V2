@@ -1,0 +1,23 @@
+/* 
+ * Logo positioning fix - applied after all other CSS
+ * Using higher specificity selectors instead of !important
+ */
+
+html body .main-container .left-panel .panel-header .logo-container {
+  /* Position above everything with higher z-index */
+  z-index: 10000000;
+  position: relative;
+}
+
+html body .main-container .left-panel .panel-header .logo-container .logo,
+html body .main-container .left-panel .panel-header .logo-container img.logo {
+  /* Ensure the logo image itself has high z-index */
+  z-index: 10000000;
+  position: relative;
+  /* Remove glow effect completely */
+  filter: none;
+  /* Make logo fully opaque */
+  opacity: 1;
+  /* Remove scaling effect */
+  transform: scale(1);
+}

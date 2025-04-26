@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sRAG - Vault-Tec Terminal</title>
+    
+    <!-- 
+    *******************************************************************
+    * DEVELOPER STANDARDS:                                            *
+    * - NO INLINE STYLES ALLOWED! Use external CSS files only         *
+    * - NO !IMPORTANT DECLARATIONS ALLOWED! Use proper CSS specificity*
+    * - Maintain modular CSS file organization                        *
+    * - Follow component naming conventions                           *
+    * - Use CSS variables from theme.css for colors and spacing       *
+    *******************************************************************
+    -->
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/agent-modal.css">
+    
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="css/components/terminal.css">
+    <link rel="stylesheet" href="css/components/controls.css">
+    <link rel="stylesheet" href="css/components/conversation.css">
+    <link rel="stylesheet" href="css/components/files-list.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/grid-overlay.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
+</head>
+
+
+
+<body class="vault-terminal">
+    <div class="crt-overlay"></div>
+    <div class="crt-flicker"></div>
+    <div class="vignette-overlay"></div>
+    
+    <!-- Manual grid overlay - commented out per request -->
+    <!-- <div id="manual-grid" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99997; opacity: 0.1;"></div> -->
+    
+    <!-- Manual scanline animation - with gradient for smoother transition -->
+    <div id="manual-scanline" style="position: fixed; top: 0; left: 0; width: 100%; height: 300px; background: linear-gradient(to bottom, transparent 0%, rgba(108, 248, 125, 0.3) 20%, rgba(108, 248, 125, 0.3) 80%, transparent 100%); box-shadow: 0 0 10px rgba(108, 248, 125, 0.4); opacity: 0.1; z-index: 99999; animation: manual-scan 15s linear infinite; pointer-events: none;"></div>
+    
+    <!-- Horizontal static scanlines -->
+    <div id="horizontal-scanlines" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99998; opacity: 0.05; background-image: linear-gradient(to bottom, rgba(108, 248, 125, 0.3) 1px, transparent 1px); background-size: 4px 4px; mix-blend-mode: screen;"></div>
+    
+    <style>
+        @keyframes manual-scan {
+            0% { top: -300px; }
+            100% { top: 100%; }
+        }
+        
+        /* Grid lines styling - kept for reference but commented out
+        #manual-grid {
+            background-image: 
+                linear-gradient(to right, rgba(53, 126, 60, 0.8) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(53, 126, 60, 0.8) 1px, transparent 1px),
+                linear-gradient(to right, rgba(27, 97, 33, 1) 2px, transparent 2px),
+                linear-gradient(to bottom, rgba(27, 97, 33, 1) 2px, transparent 2px);
+            background-size: 20px 20px, 20px 20px, 80px 80px, 80px 80px;
+            mix-blend-mode: screen;
+        }
+        */
+    </style>
+    
+    <div class="main-container">
+        <!-- Left Panel (Files) -->
+        <div class="side-panel left-panel">
+            <div class="panel-header left-panel-header">
+                <div class="logo-container">
+                    <img src="images/logo.png" alt="RAGtastic" class="logo">
+                </div>
+                <div class="header-underline"></div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="section-header">
+                    <div class="section-title">DOCUMENT INVENTORY</div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="vault-btn vault-btn-success" id="preprocess-btn">PREPROCESS</button>
+                </div>
+                
+                <div class="doc-counter-container">
+                    <div class="badge" id="doc-counter">0 SELECTED</div>
+                </div>
+                
+                <div class="files-list" id="files-container">
+                    <!-- Files will be populated by JavaScript -->
+                    <div class="loading">Loading documents...</div>
+                </div>
+                
+                <!-- Query controls -->
+                <div class="query-controls">
+                    <select id="query-type" class="query-type-selector">
+                        <option value="query">FULL QUERY</option>
+                        <option value="answer">GET ANSWER</option>
+                        <option value="sources">GET SOURCES</option>
+                    </select>
+                    <div class="source-control">
+                        <label for="sources-count">Sources:</label>
+                        <input type="range" id="sources-count" min="1" max="10" value="4">
+                        <span id="sources-count-value">4</span>
+                    </div>
+                </div>
+                
+                <!-- Footer actions -->
+                <div class="footer-actions">
+                    <button class="vault-btn full-width" id="left-reset-btn">RESET INTERFACE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel (Chat) -->
+        <div class="center-panel">
+            <div class="panel-header center-panel-header">
+                <div class="header-top">
+                    <div class="vault-tec-header">
+                        <div class="vault-tec-badge">SYS</div>
+                        <div class="vault-tec-title">VAULT-TEC AI</div>
+                    </div>
+                </div>
+                <div class="system-status">
+                    <span>SYSTEM STATUS: NOMINAL</span>
+                    <span class="rag-level">RAG LEVEL: <span class="rag-indicator">●●●●○</span></span>
+                </div>
+                <div class="header-underline"></div>
+                <!-- Query controls moved to left panel -->
+            </div>
+
+            <div class="conversation-container" id="conversation">
+                <!-- System welcome message -->
+                <div class="message-container">
+                    <div class="message-header">
+                        <div class="message-avatar system-avatar">SYS</div>
+                        <div class="message-sender">VAULT-TEC AI</div>
+                    </div>
+                    <div class="message-content system-message">
+                        <div class="boot-sequence">
+                            <div class="boot-line">VAULT-TEC INDUSTRIES (TM) TERMINAL</div>
+                            <div class="boot-line">ROBCO INTERFACE ADAPTER 2.1</div>
+                            <div class="boot-line">CHECKING SYSTEM... OK</div>
+                            <div class="boot-line">INITIALIZING RETRIEVAL AUGMENTED GENERATION...</div>
+                            <div class="boot-line">LOADING KNOWLEDGE BASE... COMPLETE</div>
+                            <div class="boot-line">ESTABLISHING SECURE CONNECTION...</div>
+                            <div class="boot-line">CONNECTION ESTABLISHED</div>
+                            <div class="boot-line boot-welcome">WELCOME TO RAGTASTIC (TM) BY VAULT-TEC</div>
+                        </div>
+                        <p>Welcome to the VAULT-TEC Retrieval Augmented Knowledge System. I'm your virtual assistant, ready to provide information and guidance using our proprietary document retrieval technology.</p>
+                        <p>How may I assist you today?</p>
+                    </div>
+                </div>
+                
+                <!-- User's question will appear here -->
+                <div class="message-container user-container" id="user-message">
+                    <div class="message-header">
+                        <div class="message-avatar user-avatar">YOU</div>
+                        <div class="message-sender">OVERSEER</div>
+                    </div>
+                    <div class="message-content user-message" id="user-content"></div>
+                </div>
+                
+                <!-- AI responses will appear here -->
+                <div class="message-container ai-container" id="ai-message">
+                    <div class="message-header">
+                        <div class="message-avatar ai-avatar">AI</div>
+                        <div class="message-sender">VAULT-TEC AI</div>
+                    </div>
+                    <div class="message-content ai-message" id="ai-content"></div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="query-input" placeholder="ENTER QUERY..." class="terminal-input">
+                <button id="submit-query" class="send-btn">
+                    <div class="btn-icon">▶</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel (System Monitor) -->
+        <div class="side-panel right-panel">
+            <div class="panel-header">
+                <div class="system-monitor-header">
+                    <div class="header-left">
+                        <div class="status-light active"></div>
+                        <div class="panel-title">SYSTEM MONITOR</div>
+                    </div>
+                    <button id="agent-network-btn" class="agent-network-toggle">AGENT NETWORK</button>
+                </div>
+                <div class="status-check">STATUS CHECK</div>
+            </div>
+
+            <div class="panel-section system-monitor">
+                <div class="system-time">[00:00:00]</div>
+                <div class="system-info">
+                    <div>VAULT-TEC RAGTASTIC</div>
+                    <div>MONITOR V1.0</div>
+                    <div>INITIALIZING SYSTEM...</div>
+                    <div>CONNECTION TO CENTRAL</div>
+                    <div>DATABASE: ESTABLISHED</div>
+                    <div>RETRIEVAL ENGINES: ONLINE</div>
+                    <div>KNOWLEDGE BASE: LOADED</div>
+                    <div>STANDING BY FOR USER</div>
+                    <div>INTERACTION...</div>
+                    <div class="system-cursor">></div>
+                </div>
+
+                <div class="system-stats">
+                    <div class="stats-header">SYSTEM STATISTICS</div>
+                    <div class="stats-grid">
+                        <div class="stats-box">
+                            <div class="stats-label">DOCUMENTS</div>
+                            <div class="stats-value" id="stats-docs">7</div>
+                        </div>
+                        <div class="stats-box">
+                            <div class="stats-label">RETRIEVAL SCORE</div>
+                            <div class="stats-value" id="stats-score">96%</div>
+                        </div>
+                        <div class="stats-box">
+                            <div class="stats-label">LATENCY</div>
+                            <div class="stats-value" id="stats-latency">312ms</div>
+                        </div>
+                        <div class="stats-box">
+                            <div class="stats-label">TOKEN COUNT</div>
+                            <div class="stats-value" id="stats-tokens">246</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reset button moved to left panel -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Network Modal -->
+    <div id="agent-network-modal" class="agent-network-modal">
+        <div class="agent-network-content">
+            <div class="agent-network-header">
+                <div class="agent-network-title">VAULT-TEC AGENT NETWORK</div>
+                <button class="agent-network-close">×</button>
+            </div>
+            <div class="agent-network-body">
+                <div class="loading-overlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">INITIALIZING AGENT NETWORK...</div>
+                </div>
+                <svg class="connections-container" width="100%" height="100%"></svg>
+                <div class="metro-container"></div>
+                
+                <!-- Radar display -->
+                <div class="radar-mask">
+                    <div class="radar-screen">
+                        <div class="radar-sweep"></div>
+                        <div class="radar-center"></div>
+                        <div class="radar-circles"></div>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <div class="info-panel-header">AGENT DETAILS</div>
+                    <div class="info-content">Select an agent node to view details</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/select-enhancer.js"></script>
+    <script src="js/agent-modal.js"></script>
+    <script src="js/grid-overlay.js"></script>
+</body>
+</html>

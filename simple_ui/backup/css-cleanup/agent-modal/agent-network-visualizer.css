@@ -1,0 +1,203 @@
+/* Agent Network Visualizer - Fallout Vault-Tec Theme */
+
+.agent-network-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.agent-network-content {
+  background-color: var(--bg-terminal);
+  border: 3px solid var(--pip-green);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 30px var(--crt-glow), inset 0 0 20px rgba(95, 253, 126, 0.2);
+  width: 90%;
+  height: 90%;
+  max-width: 1200px;
+  max-height: 800px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-network-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 2px solid var(--pip-green);
+  background-color: var(--bg-tertiary);
+}
+
+.agent-network-title {
+  color: var(--vault-yellow);
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.agent-network-close {
+  background-color: var(--bg-tertiary);
+  color: var(--pip-green);
+  border: 2px solid var(--pip-green);
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.2s ease;
+}
+
+.agent-network-close:hover {
+  background-color: var(--pip-green);
+  color: var(--bg-terminal);
+}
+
+.agent-network-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  /* Grid background */
+  background-image: 
+    linear-gradient(rgba(95, 253, 126, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(95, 253, 126, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: -1px -1px;
+}
+
+/* Loading elements */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--pip-green);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+.loading-text {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--pip-green);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Custom styling for vis.js elements */
+.vis-network:focus {
+  outline: none;
+}
+
+/* Apply CRT effect to the visualization */
+.agent-network-body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(rgba(95, 253, 126, 0.03) 50%, rgba(0, 0, 0, 0) 0) 0 0,
+    radial-gradient(circle at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%);
+  background-size: 100% 4px, 100% 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Scanline effect */
+.agent-network-body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(95, 253, 126, 0.5) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  opacity: 0.8;
+  z-index: 11;
+  pointer-events: none;
+  animation: scanline 3s linear infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+/* Tooltip customization */
+.vis-tooltip {
+  position: absolute;
+  visibility: hidden;
+  padding: 8px;
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--pip-green);
+  border-radius: var(--radius-sm);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  box-shadow: 0 0 10px var(--crt-glow);
+  z-index: 300;
+}
+
+/* Make text in the visualization more readable */
+/* More specific selectors to override default vis.js styles without !important */
+html body div.vis-network div.vis-navigation div.vis-button.vis-up,
+html body div.vis-network div.vis-navigation div.vis-button.vis-down,
+html body div.vis-network div.vis-navigation div.vis-button.vis-left,
+html body div.vis-network div.vis-navigation div.vis-button.vis-right,
+html body div.vis-network div.vis-navigation div.vis-button.vis-zoomIn,
+html body div.vis-network div.vis-navigation div.vis-button.vis-zoomOut,
+html body div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--pip-green);
+}
+
+html body div.vis-network div.vis-navigation div.vis-button:hover {
+  box-shadow: 0 0 10px var(--crt-glow);
+}
+
+html body div.vis-network div.vis-navigation div.vis-button:hover:before {
+  color: var(--pip-green);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .agent-network-content {
+    width: 95%;
+    height: 95%;
+  }
+  
+  .agent-network-title {
+    font-size: 16px;
+  }
+  
+  html body .agent-network-body .info-panel,
+  .agent-network-content .agent-network-body .info-panel {
+    width: 200px;
+  }
+}

@@ -1,0 +1,10 @@
+# Node.js requirements
+# This project only requires Node.js to run the static file server
+# No additional npm packages are required
+
+# Node.js v14 or higher is recommended
+
+# For development, you might want:
+# - eslint for JS linting
+# - stylelint for CSS linting
+# - browser-sync for live reloading

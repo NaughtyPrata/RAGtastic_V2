@@ -1,0 +1,94 @@
+/* Dynamic positioning styles for agent nodes */
+/* These are placeholder styles that will be overridden by JS */
+
+/* Base position classes for different agents */
+.metro-station[data-type="orchestrator"] {
+    top: 50%;
+    left: 50%;
+}
+
+.metro-station[data-type="retriever"] {
+    top: 30%;
+    left: 20%;
+}
+
+.metro-station[data-type="synthesizer"] {
+    top: 20%;
+    left: 50%;
+}
+
+.metro-station[data-type="critic"] {
+    top: 30%;
+    left: 80%;
+}
+
+.metro-station[data-type="coder"] {
+    top: 70%;
+    left: 20%;
+}
+
+.metro-station[data-type="adapter"] {
+    top: 80%;
+    left: 50%;
+}
+
+.metro-station[data-type="presenter"] {
+    top: 70%;
+    left: 80%;
+}
+
+.metro-station[data-type="user"] {
+    top: 50%;
+    left: 5%;
+}
+
+.metro-station[data-type="response"] {
+    top: 50%;
+    left: 95%;
+}
+
+/* Position classes for labels */
+.station-label[data-for-type="orchestrator"] {
+    top: 50%;
+    left: 50%;
+}
+
+.station-label[data-for-type="retriever"] {
+    top: 30%;
+    left: 20%;
+}
+
+.station-label[data-for-type="synthesizer"] {
+    top: 20%;
+    left: 50%;
+}
+
+.station-label[data-for-type="critic"] {
+    top: 30%;
+    left: 80%;
+}
+
+.station-label[data-for-type="coder"] {
+    top: 70%;
+    left: 20%;
+}
+
+.station-label[data-for-type="adapter"] {
+    top: 80%;
+    left: 50%;
+}
+
+.station-label[data-for-type="presenter"] {
+    top: 70%;
+    left: 80%;
+}
+
+.station-label[data-for-type="user"] {
+    top: 50%;
+    left: 5%;
+}
+
+.station-label[data-for-type="response"] {
+    top: 50%;
+    left: 95%;
+}

@@ -1,0 +1,212 @@
+/* Button Styles and Form Controls */
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 1px;
+}
+
+.vault-btn {
+  background-color: var(--bg-tertiary);
+  color: var(--pip-green);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 8px 15px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.vault-btn:hover:not(:disabled) {
+  background-color: var(--bg-highlight);
+  box-shadow: 0 0 8px var(--crt-glow);
+}
+
+.vault-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.vault-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vault-btn-success {
+  color: var(--pip-green);
+  border-color: var(--pip-green);
+}
+
+.vault-btn-danger {
+  color: var(--rust-red);
+  border-color: var(--rust-red);
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Input Container */
+.input-container {
+  padding: 15px;
+  background-color: var(--bg-tertiary);
+  border-top: 2px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.terminal-input {
+  flex: 1;
+  background-color: rgba(8, 12, 8, 0.95);
+  border: 1px solid var(--pip-green);
+  border-radius: var(--radius-sm);
+  padding: 10px 15px;
+  color: var(--pip-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 18px;
+  height: 44px;
+  outline: none;
+}
+
+.terminal-input::placeholder {
+  color: rgba(95, 253, 126, 0.5);
+}
+
+#query-input::placeholder {
+  color: rgba(95, 253, 126, 0.5);
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  background-color: var(--pip-dark-green);
+  color: var(--pip-green);
+  border: 1px solid var(--pip-green);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.send-btn:hover {
+  background-color: var(--pip-green);
+  color: var(--bg-terminal);
+}
+
+.btn-icon {
+  font-size: 16px;
+}
+
+.btn-icon.loading {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Query settings */
+.query-controls {
+  margin-top: 15px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.query-type-selector {
+  background-color: var(--bg-terminal);
+  color: var(--pip-green);
+  border: 2px solid var(--pip-green);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  box-shadow: 0 0 5px var(--crt-glow);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235ffd7e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 30px;
+}
+
+/* Style for the dropdown options - this works with most modern browsers */
+.query-type-selector option {
+  background-color: var(--bg-terminal);
+  color: var(--pip-green);
+  padding: 10px;
+  border: 1px solid var(--pip-green);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Custom select styling for modern browsers */
+.query-controls {
+  position: relative;
+}
+
+/* Enhance dropdown with custom styling using a sibling element approach */
+.query-type-selector:focus {
+  border-color: var(--pip-green);
+  box-shadow: 0 0 10px var(--crt-glow);
+}
+
+.source-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+}
+
+/* Range Inputs */
+#sources-count {
+  -webkit-appearance: none;
+  height: 5px;
+  width: 100px;
+  background: var(--border-primary);
+  border-radius: 5px;
+  background-image: linear-gradient(var(--pip-green), var(--pip-green));
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+}
+
+#sources-count::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: var(--pip-green);
+  cursor: pointer;
+  box-shadow: 0 0 5px var(--crt-glow);
+}
+
+#sources-count::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+#sources-count-value {
+  color: var(--pip-green);
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}

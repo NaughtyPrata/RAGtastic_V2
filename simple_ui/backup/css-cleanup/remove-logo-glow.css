@@ -1,0 +1,37 @@
+/* 
+ * This file specifically removes all glow effects from the logo
+ * Using multiple high-specificity selectors instead of !important
+ */
+
+/* High specificity selector for logo container and logo */
+html body .main-container .side-panel .panel-header .logo-container,
+html body .main-container .side-panel .panel-header .logo-container .logo,
+html body .main-container .side-panel .panel-header .logo-container img {
+  filter: none;
+  box-shadow: none;
+  text-shadow: none;
+  border: none;
+  outline: none;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Target all possible vendor prefixes with high specificity */
+html body .main-container .side-panel .panel-header .logo-container img {
+  -webkit-filter: none;
+  -moz-filter: none;
+  -o-filter: none;
+  -ms-filter: none;
+}
+
+/* Target specifically by attributes with high specificity */
+html body .main-container .side-panel .panel-header img[src*="logo.png"],
+html body .main-container .side-panel .panel-header img[alt="RAGtastic"],
+html body .main-container .side-panel .panel-header img[class="logo"] {
+  filter: none;
+  box-shadow: none;
+  -webkit-filter: none;
+  -moz-filter: none;
+  -o-filter: none;
+  -ms-filter: none;
+}

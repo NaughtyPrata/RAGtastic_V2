@@ -1,0 +1,395 @@
+/* Modal Styling and Agent Network */
+
+/* Agent Network Modal Button */
+.agent-network-toggle {
+  background-color: var(--terminal-black);
+  color: var(--vault-yellow);
+  border: 1px solid var(--vault-yellow);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.agent-network-toggle:hover {
+  background-color: var(--vault-yellow);
+  color: var(--terminal-black);
+}
+
+/* Modal container */
+.agent-network-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Override display none when shown */
+.agent-network-modal.show {
+  display: flex;
+  opacity: 1;
+}
+
+/* Modal content */
+.agent-network-content {
+  width: 90%;
+  height: 90%;
+  max-width: 1200px;
+  background-color: var(--bg-terminal);
+  border: 2px solid var(--pip-green);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(95, 253, 126, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal header */
+.agent-network-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 2px solid var(--pip-green);
+}
+
+.agent-network-title {
+  color: var(--pip-green);
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.agent-network-close {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.agent-network-close:hover {
+  color: var(--pip-green);
+}
+
+/* Modal body */
+.agent-network-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-terminal);
+  background-image: radial-gradient(circle at center, rgba(95, 253, 126, 0.05) 0%, transparent 70%);
+}
+
+
+
+/* Radar screen circular mask */
+.radar-mask {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid var(--pip-green);
+  overflow: hidden;
+  box-shadow: 0 0 10px var(--crt-glow), inset 0 0 10px rgba(95, 253, 126, 0.3);
+  z-index: 30;
+}
+
+.radar-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 16, 10, 0.9);
+}
+
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 150px 150px;
+  border-color: transparent transparent rgba(95, 253, 126, 0.2) transparent;
+  transform-origin: 0 0;
+  animation: sweep 4s infinite linear;
+}
+
+@keyframes sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background-color: var(--pip-green);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 4px var(--crt-glow);
+}
+
+.radar-circles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(95, 253, 126, 0.3);
+  border-radius: 50%;
+}
+
+.radar-circles:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 1px solid rgba(95, 253, 126, 0.3);
+  border-radius: 50%;
+}
+
+.radar-circles:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(95, 253, 126, 0.3);
+  border-radius: 50%;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(8, 12, 8, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.5s ease;
+}
+
+.loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid transparent;
+  border-top: 3px solid var(--pip-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  color: var(--pip-green);
+  font-size: 16px;
+}
+
+/* Metro map container */
+.metro-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+}
+
+/* Metro station with pulse animation */
+.metro-station {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--bg-terminal);
+  border: 2px solid var(--pip-green);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.metro-station:hover {
+  box-shadow: 0 0 10px var(--pip-green);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.metro-station.active {
+  background-color: var(--pip-green);
+  box-shadow: 0 0 15px var(--pip-green);
+  animation: activePulse 1.5s infinite;
+}
+
+@keyframes activePulse {
+  0% { opacity: 0.8; box-shadow: 0 0 10px var(--vault-yellow); }
+  50% { opacity: 1; box-shadow: 0 0 20px var(--vault-yellow); }
+  100% { opacity: 0.8; box-shadow: 0 0 10px var(--vault-yellow); }
+}
+
+/* Special agent types */
+.metro-station.orchestrator {
+  width: 20px;
+  height: 20px;
+  background-color: var(--vault-yellow);
+  border-color: var(--vault-yellow);
+  animation: orchestratorPulse 3s infinite;
+}
+
+@keyframes orchestratorPulse {
+  0% { opacity: 0.9; box-shadow: 0 0 15px var(--vault-yellow); }
+  50% { opacity: 1; box-shadow: 0 0 25px var(--vault-yellow); }
+  100% { opacity: 0.9; box-shadow: 0 0 15px var(--vault-yellow); }
+}
+
+.metro-station.orchestrator.active {
+  box-shadow: 0 0 15px var(--vault-yellow);
+}
+
+.metro-station.user,
+.metro-station.response {
+  background-color: var(--vault-blue);
+  border-color: var(--vault-blue);
+  /* Diamond shape */
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Flow particle styles */
+.flow-particle {
+  fill: var(--vault-yellow);
+  r: 3;
+  filter: drop-shadow(0 0 3px var(--vault-yellow));
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Station labels */
+.station-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: bold;
+  background-color: rgba(8, 12, 8, 0.7);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pip-green);
+  box-shadow: 0 0 5px rgba(95, 253, 126, 0.3);
+  pointer-events: none;
+  z-index: 11;
+  white-space: nowrap;
+  margin-top: 20px;
+}
+
+/* Info panel - moved to top left */
+.info-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 300px;
+  background-color: rgba(8, 12, 8, 0.9);
+  border: 1px solid var(--pip-green);
+  border-radius: var(--radius-sm);
+  z-index: 12;
+  box-shadow: 0 0 10px rgba(95, 253, 126, 0.3);
+  display: none; /* Initially hidden, will be shown when a node is selected */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.info-panel.show-panel {
+  display: block;
+  opacity: 1;
+}
+
+.info-panel-header {
+  background-color: var(--pip-dark-green);
+  color: var(--pip-green);
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--pip-green);
+}
+
+.info-content {
+  padding: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.agent-name {
+  color: var(--pip-green);
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.agent-status {
+  margin-bottom: 10px;
+}
+
+.status-active {
+  color: var(--pip-green);
+}
+
+.status-inactive {
+  color: var(--text-secondary);
+}
+
+.agent-description {
+  line-height: 1.4;
+}
+
+/* SVG Connections */
+.connections-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+}

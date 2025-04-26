@@ -1,0 +1,17 @@
+{
+  "name": "srag-ui-demo",
+  "version": "1.0.0",
+  "description": "A retro-inspired UI for RAG systems",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests specified\""
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,27 @@
+/* Styles for the Agent Network modal button - using !important to override conflicts */
+
+.agent-network-toggle {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--vault-yellow) !important;
+  border: 1px solid var(--vault-yellow) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 5px 8px !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: auto !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  z-index: 100 !important;
+}
+
+.agent-network-toggle:hover {
+  background-color: var(--vault-yellow) !important;
+  color: var(--bg-terminal) !important;
+  box-shadow: 0 0 10px rgba(255, 180, 0, 0.5) !important;
+}

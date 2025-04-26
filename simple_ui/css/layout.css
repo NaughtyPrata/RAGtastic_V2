@@ -1,0 +1,379 @@
+/* Layout Styles - Main containers and structure */
+
+/* Main Layout */
+.main-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  padding: 10px;
+  gap: 10px;
+}
+
+/* Side Panels */
+.side-panel {
+  flex: 0 0 300px;
+  height: 100%;
+  background-color: rgba(14, 17, 14, 0.9);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  position: relative;
+}
+
+.left-panel {
+  flex: 0 0 260px;
+}
+
+.right-panel {
+  flex: 0 0 340px;
+}
+
+.left-panel::after, .right-panel::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 70%;
+  transform: translateY(-50%);
+  background: linear-gradient(to bottom, transparent, var(--pip-green), transparent);
+  z-index: 1;
+}
+
+.left-panel::after {
+  right: -1px;
+}
+
+.right-panel::after {
+  left: -1px;
+}
+
+/* Panel Headers */
+.panel-header {
+  padding: 15px;
+  border-bottom: 2px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--bg-tertiary);
+}
+
+.left-header, .right-header, .system-monitor-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Fix panel header specific alignments */
+.right-panel .panel-header {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.system-monitor-header {
+  width: 100%;
+}
+
+.center-panel-header {
+  padding: 15px;
+}
+
+.header-top {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.vault-tec-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vault-tec-badge {
+  background-color: var(--vault-yellow);
+  color: var(--terminal-black);
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+.vault-tec-title {
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.system-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  color: var(--pip-green);
+  font-size: 16px;
+}
+
+.rag-level {
+  color: var(--vault-yellow);
+}
+
+.rag-indicator {
+  color: var(--vault-yellow);
+  letter-spacing: 2px;
+}
+
+.status-check {
+  align-self: flex-end;
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.panel-title {
+  font-size: 18px;
+  color: var(--pip-green);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.header-underline {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(to right, transparent, var(--pip-green), transparent);
+  margin-top: 10px;
+}
+
+/* Panel header specific styles */
+.left-panel-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo Container */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: 20; /* Much higher than all other elements */
+}
+
+.logo {
+  max-width: 220px;
+  height: auto;
+  margin-top: 5px;
+  display: block;
+  position: relative;
+  z-index: 20; /* Explicitly set z-index for the logo too */
+  /* Removed glow effect */
+  filter: none;
+}
+
+/* Panel Sections */
+.panel-section {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.section-title {
+  font-size: 14px;
+  color: var(--vault-yellow);
+  font-weight: bold;
+}
+
+/* Center Panel */
+.center-panel {
+  flex: 1;
+  background-color: rgba(14, 17, 14, 0.9);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .side-panel {
+    flex: 0 0 250px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .side-panel {
+    flex: none;
+    height: 300px;
+    margin-bottom: 10px;
+  }
+  
+  .center-panel {
+    height: calc(100vh - 620px);
+  }
+}
+
+/* Status Indicator */
+.status-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--status-danger);
+  box-shadow: 0 0 5px var(--status-danger);
+}
+
+.status-light.active {
+  background-color: var(--status-danger);
+  box-shadow: 0 0 5px var(--status-danger);
+  animation: pulse 2s infinite;
+}
+
+/* Footer actions */
+.footer-actions {
+  margin-top: 15px;
+  padding-top: 15px;
+}
+
+/* Left reset button with outline */
+#left-reset-btn {
+  border: 2px solid var(--pip-green);
+  box-shadow: 0 0 5px var(--crt-glow);
+}
+
+.badge {
+  background-color: var(--bg-tertiary);
+  color: var(--vault-yellow);
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--vault-yellow);
+  display: inline-block;
+}
+
+#doc-counter {
+  margin-top: 2px;
+}
+
+.doc-counter-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  padding-left: 1px;  /* Match button padding */
+}
+
+.doc-counter-container .badge {
+  align-self: flex-start;
+}
+
+/* System time info */
+.system-time {
+  color: var(--pip-green);
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.system-info {
+  background-color: var(--bg-terminal);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  color: var(--pip-green);
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  position: relative;
+  height: 350px;
+  overflow-y: auto;
+}
+
+.system-cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.error-message {
+  color: var(--rust-red);
+  font-weight: bold;
+}
+
+/* System Monitor */
+.system-monitor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.system-stats {
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.stats-header {
+  color: var(--vault-yellow);
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stats-box {
+  background-color: var(--bg-terminal);
+  border: 2px solid var(--pip-green);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  text-align: center;
+  box-shadow: 0 0 3px var(--crt-glow);
+}
+
+.stats-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.stats-value {
+  color: var(--pip-green);
+  font-size: 16px;
+  font-weight: bold;
+}
