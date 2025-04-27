@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Simulate the query flow through the network
     function simulateQueryFlow() {
         const flow = [
-            { from: 8, to: 1 }, // User to Orchestrator
+            { from: 6, to: 1 }, // User to Orchestrator
             { from: 1, to: 2 }, // Orchestrator to Retriever
             { from: 2, to: 3 }, // Retriever to Synthesizer
             { from: 3, to: 4 }, // Synthesizer to Critic
