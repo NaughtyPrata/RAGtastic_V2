@@ -1,6 +1,5 @@
 /**
  * Express server for sRAG API
- * Fallout Vault-Tec themed RAG implementation
  */
 
 const express = require('express');
@@ -13,6 +12,7 @@ const fs = require('fs');
 // Import Agents
 const RetrieverAgent = require('./src/agents/retrieverAgent');
 const SynthesizerAgent = require('./src/agents/synthesizerAgent');
+const CriticAgent = require('./src/agents/criticAgent');
 
 // Load environment variables
 dotenv.config();
@@ -591,6 +591,185 @@ function removeRoleplayElements(text) {
   
   return filtered;
 }
+
+// Complete RAG flow with CriticAgent
+app.post('/api/rag/complete', async (req, res) => {
+  try {
+    const { query, options = {} } = req.body;
+    
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid query',
+        message: 'Query must be a non-empty string'
+      });
+    }
+    
+    log(`Processing complete RAG flow for query: ${query}`);
+    
+    // Initialize agents
+    const retrieverAgent = new RetrieverAgent({
+      numResults: options.numResults || 10,
+      similarityThreshold: options.similarityThreshold || 0.3,
+      useHybridSearch: options.useHybridSearch !== false,
+      verbose: true
+    });
+    
+    const synthesizerAgent = new SynthesizerAgent({
+      model: options.model || "llama3-8b-8192",
+      temperature: options.temperature || 0.7,
+      maxTokens: options.maxTokens || 1024,
+      topP: options.topP || 1.0,
+      verbose: true
+    });
+    
+    const criticAgent = new CriticAgent({
+      model: options.model || "llama3-8b-8192",
+      temperature: options.temperature || 0.4,
+      maxTokens: options.maxTokens || 512,
+      verbose: true,
+      maxAttempts: options.maxAttempts || 3
+    });
+    
+    // Processing variables
+    let currentQuery = query;
+    let currentResponse = null;
+    let latestContext = null;
+    let latestEvaluation = null;
+    let attempts = 0;
+    let processComplete = false;
+    let usageStats = [];
+    let history = [];
+    
+    // Start the retrieval-synthesis-criticism loop
+    while (!processComplete && attempts < criticAgent.options.maxAttempts) {
+      // Record the iteration in history
+      const iterationRecord = {
+        attempt: attempts + 1,
+        query: currentQuery,
+        timestamp: new Date().toISOString()
+      };
+      
+      try {
+        // 1. Retrieve context
+        log(`Attempt ${attempts + 1}: Retrieving context for query: "${currentQuery}"`);
+        latestContext = await retrieverAgent.retrieve(currentQuery);
+        
+        if (!latestContext || latestContext.trim() === '') {
+          iterationRecord.status = 'no_context';
+          iterationRecord.message = 'No relevant context found';
+          history.push(iterationRecord);
+          
+          // No context was found, end the loop
+          return res.json({
+            success: true,
+            query: query,
+            response: "No relevant information found in the database to answer your query. Please try a different question or preprocess additional documents.",
+            context: 'No context found',
+            sources: [],
+            history: history
+          });
+        }
+        
+        // 2. Synthesize response
+        log(`Attempt ${attempts + 1}: Synthesizing response for query: "${currentQuery}"`);
+        const synthesizedResult = await synthesizerAgent.synthesize(currentQuery, latestContext);
+        currentResponse = synthesizedResult.response;
+        
+        // Add usage statistics
+        if (synthesizedResult.usage) {
+          usageStats.push({
+            agent: 'synthesizer',
+            attempt: attempts + 1,
+            usage: synthesizedResult.usage
+          });
+        }
+        
+        // 3. Apply post-processing filter to catch any remaining roleplay elements
+        currentResponse = removeRoleplayElements(currentResponse);
+        
+        // 4. Evaluate the response
+        log(`Attempt ${attempts + 1}: Evaluating response quality`);
+        latestEvaluation = await criticAgent.evaluate(currentQuery, currentResponse, latestContext, attempts);
+        
+        // Add usage statistics
+        if (latestEvaluation.usage) {
+          usageStats.push({
+            agent: 'critic',
+            attempt: attempts + 1,
+            usage: latestEvaluation.usage
+          });
+        }
+        
+        // Record the results in history
+        iterationRecord.status = latestEvaluation.approved ? 'approved' : 'refinement_needed';
+        iterationRecord.score = latestEvaluation.score;
+        iterationRecord.reasoning = latestEvaluation.reasoning;
+        iterationRecord.refinedQuery = latestEvaluation.refinedQuery;
+        history.push(iterationRecord);
+        
+        // 5. Check if we need to continue or can exit the loop
+        if (latestEvaluation.approved) {
+          log(`Attempt ${attempts + 1}: Response approved (score: ${latestEvaluation.score})`);
+          processComplete = true;
+        } else {
+          log(`Attempt ${attempts + 1}: Response not approved (score: ${latestEvaluation.score}). Refining query.`);
+          currentQuery = latestEvaluation.refinedQuery;
+          attempts++;
+        }
+      } catch (error) {
+        log(`Error in processing loop (attempt ${attempts + 1}): ${error.message}`);
+        
+        // Record error in history
+        iterationRecord.status = 'error';
+        iterationRecord.error = error.message;
+        history.push(iterationRecord);
+        
+        // On error, proceed with what we have or return error message
+        if (currentResponse) {
+          processComplete = true;
+        } else {
+          return res.status(500).json({
+            success: false,
+            error: 'RAG processing error',
+            message: error.message,
+            history: history
+          });
+        }
+      }
+    }
+    
+    // Get the next action recommendation
+    const nextAction = criticAgent.getNextAction(latestEvaluation);
+    
+    // Final response after loop completion
+    return res.json({
+      success: true,
+      query: query,
+      response: currentResponse,
+      context: `Context used (${latestContext?.length || 0} chars)`,
+      sources: [],
+      evaluation: {
+        score: latestEvaluation.score,
+        approved: latestEvaluation.approved,
+        reasoning: latestEvaluation.reasoning,
+        attempts: attempts + 1,
+        maxAttempts: criticAgent.options.maxAttempts,
+        action: nextAction.action
+      },
+      usage: usageStats,
+      history: history
+    });
+  } catch (error) {
+    log(`Error processing complete RAG flow: ${error.message}`);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'RAG processing error',
+      message: error.message
+    });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {

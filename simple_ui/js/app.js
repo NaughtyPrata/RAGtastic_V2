@@ -328,14 +328,18 @@ async function handleSubmitQuery() {
         const options = {
             numResults: sourcesCount,
             similarityThreshold: 0.3,
-            useHybridSearch: true
+            useHybridSearch: true,
+            maxAttempts: 3  // Maximum attempts for CriticAgent refinement
         };
+        
+        // Add processing message
+        addSystemMessage('Processing your query...');
         
         // Call appropriate API based on query type
         switch (queryType) {
             case 'query':
                 response = await api.query(question, options);
-                displayAnswer(response.response || response.answer || 'No response received.');
+                displayCompleteResponse(response, question);
                 break;
                 
             case 'answer':
@@ -356,10 +360,27 @@ async function handleSubmitQuery() {
         
         // Update stats with usage information if available
         if (response && response.usage) {
+            let totalTokens = 0;
+            if (Array.isArray(response.usage)) {
+                // Handle array of usage statistics from complete flow
+                response.usage.forEach(usage => {
+                    if (usage.usage && usage.usage.total_tokens) {
+                        totalTokens += usage.usage.total_tokens;
+                    }
+                });
+            } else {
+                // Handle single usage object
+                totalTokens = response.usage.total_tokens || 0;
+            }
+            
+            // Calculate quality score from evaluation if available
+            const qualityScore = response.evaluation?.score ? 
+                `${Math.round(response.evaluation.score * 100)}%` : '100%';
+            
             updateSystemStats({
                 latency: `${response.metrics?.latency || 0}ms`,
-                tokens: response.usage.total_tokens || 0,
-                score: '100%'
+                tokens: totalTokens,
+                score: qualityScore
             });
         }
     } catch (error) {
@@ -371,6 +392,50 @@ async function handleSubmitQuery() {
     
     // Clear input after sending
     queryInput.value = '';
+}
+
+// Display complete response from RAG system with CriticAgent evaluation
+function displayCompleteResponse(response, question) {
+    // First display the answer
+    displayAnswer(response.response || 'No response received.');
+    
+    // If we have refinement history, show it
+    if (response.history && response.history.length > 0) {
+        const refinementCount = response.history.filter(item => 
+            item.status === 'refinement_needed' || 
+            item.refinedQuery !== item.query
+        ).length;
+        
+        if (refinementCount > 0) {
+            setTimeout(() => {
+                addSystemMessage(`The CRITIC AGENT refined your query ${refinementCount} times to improve the quality of the response.`);
+                
+                // Show query refinement process
+                let refinementInfo = 'QUERY REFINEMENT DETAILS:\n';
+                response.history.forEach((item, index) => {
+                    if (index === 0) {
+                        refinementInfo += `➤ ORIGINAL QUERY: "${item.query}"\n`;
+                    }
+                    
+                    if (item.status === 'refinement_needed' && item.refinedQuery && item.refinedQuery !== item.query) {
+                        refinementInfo += `➤ REFINEMENT ${item.attempt}: "${item.refinedQuery}"\n`;
+                        if (item.reasoning) {
+                            refinementInfo += `   REASONING: ${item.reasoning}\n`;
+                        }
+                    }
+                });
+                
+                // Show the quality evaluation
+                if (response.evaluation) {
+                    const score = Math.round(response.evaluation.score * 100);
+                    refinementInfo += `\nFINAL QUALITY SCORE: ${score}%\n`;
+                    refinementInfo += `ATTEMPTS: ${response.evaluation.attempts}/${response.evaluation.maxAttempts}\n`;
+                }
+                
+                addSystemMessage(refinementInfo);
+            }, 1000); // Delay to create a more natural conversation flow
+        }
+    }
 }
 
 // Format sources for display

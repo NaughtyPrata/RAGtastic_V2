@@ -57,13 +57,16 @@ class RAGAPI {
      */
     async query(question, options = {}) {
         try {
-            // Default to synthesized query for better narrative responses
-            const endpoint = options.useSynthesizer !== false 
-                ? `${this.baseUrl}/synthesizer/query` 
-                : `${this.baseUrl}/retriever/query`;
+            // Default to complete RAG flow with CriticAgent
+            const endpoint = options.useCompleteFlow !== false 
+                ? `${this.baseUrl}/rag/complete`
+                : options.useSynthesizer !== false 
+                    ? `${this.baseUrl}/synthesizer/query` 
+                    : `${this.baseUrl}/retriever/query`;
                 
             console.log(`Using endpoint: ${endpoint}`);
             
+            const startTime = Date.now();
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
@@ -79,7 +82,13 @@ class RAGAPI {
                 throw new Error(`HTTP error: ${response.status}`);
             }
             
-            return await response.json();
+            const result = await response.json();
+            
+            // Calculate latency
+            const latency = Date.now() - startTime;
+            result.metrics = { ...result.metrics, latency };
+            
+            return result;
         } catch (error) {
             console.error('Error querying:', error);
             throw error;

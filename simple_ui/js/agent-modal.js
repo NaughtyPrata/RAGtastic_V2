@@ -82,7 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { from: 1, to: 7 }, // Orchestrator to Presentation
             { from: 2, to: 3 }, // Retriever to Synthesizer
             { from: 3, to: 4 }, // Synthesizer to Critic
-            { from: 4, to: 6 }, // Critic to Persona
+            { from: 4, to: 6 }, // Critic to Persona (if approved)
+            { from: 4, to: 2 }, // Critic back to Retriever (if rejected for refinement)
             { from: 6, to: 7 }, // Persona to Presentation
             { from: 8, to: 1 }, // User to Orchestrator
             { from: 7, to: 9 }  // Presentation to Final Response
@@ -276,23 +277,40 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Simulate the query flow through the network
     function simulateQueryFlow() {
-        const connections = [
+        const flow = [
             { from: 8, to: 1 }, // User to Orchestrator
             { from: 1, to: 2 }, // Orchestrator to Retriever
             { from: 2, to: 3 }, // Retriever to Synthesizer
             { from: 3, to: 4 }, // Synthesizer to Critic
-            { from: 4, to: 6 }, // Critic to Adapter
+            
+            // Add refinement loop - Critic rejects and sends back to Retriever
+            { from: 4, to: 2 }, // Critic back to Retriever (rejection/refinement)
+            { from: 2, to: 3 }, // Retriever to Synthesizer (second attempt)
+            { from: 3, to: 4 }, // Synthesizer to Critic (second review)
+            
+            // Now the response is approved
+            { from: 4, to: 6 }, // Critic to Adapter (approval)
             { from: 6, to: 7 }, // Adapter to Presenter
             { from: 7, to: 9 }  // Presenter to Response
         ];
         
-        connections.forEach((conn, index) => {
+        // Keep track of refinement iteration
+        let criticsIterationCount = 0;
+        
+        flow.forEach((conn, index) => {
             setTimeout(() => {
+                // Check if this is the critic to retriever refinement path
+                let options = {};
+                if (conn.from === 4 && conn.to === 2) {
+                    criticsIterationCount++;
+                    options.iteration = criticsIterationCount;
+                }
+                
                 // Activate the connection line
-                activateConnection(conn.from, conn.to);
+                activateConnection(conn.from, conn.to, options);
                 
                 // Activate the destination node
-                if (index < connections.length - 1) {
+                if (index < flow.length - 1) {
                     setTimeout(() => {
                         activateNode(conn.to);
                     }, 500);
@@ -302,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Activate a connection between nodes
-    function activateConnection(fromId, toId) {
+    function activateConnection(fromId, toId, options = {}) {
         // Find the connection line in SVG
         const lines = document.querySelectorAll('.connections-container line');
         let line;
@@ -343,16 +361,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (line) {
-            // Highlight the line
-            line.setAttribute('stroke', 'var(--vault-yellow)');
-            line.setAttribute('stroke-width', '1.5');
-            line.setAttribute('opacity', '1');
+            // Clear existing classes
+            line.classList.remove('refinement-loop');
             
-            // Add a glowing effect
-            line.setAttribute('filter', 'drop-shadow(0 0 5px var(--vault-yellow))');
-            
-            // Flow particles removed as they weren't working properly
+            // Handle refinement loop (Critic to Retriever) differently
+            if (fromId === 4 && toId === 2) {
+                // This is the CriticAgent to RetrieverAgent refinement path
+                line.classList.add('refinement-loop');
+                updateCriticCounter(fromId, options.iteration || 1);
+            } else {
+                // Normal path highlighting
+                line.setAttribute('stroke', 'var(--vault-yellow)');
+                line.setAttribute('stroke-width', '1.5');
+                line.setAttribute('opacity', '1');
+                line.setAttribute('filter', 'drop-shadow(0 0 5px var(--vault-yellow))');
+            }
         }
+    }
+    
+    // Update the critic counter badge
+    function updateCriticCounter(nodeId, count) {
+        // Find the critic node
+        const node = document.getElementById(`station-${nodeId}`);
+        if (!node) return;
+        
+        // Remove any existing badge
+        const existingBadge = node.querySelector('.notification-badge');
+        if (existingBadge) {
+            existingBadge.remove();
+        }
+        
+        // Create and add the badge
+        const badge = document.createElement('div');
+        badge.className = 'notification-badge';
+        badge.textContent = count;
+        node.appendChild(badge);
     }
     
     // Activate a node
@@ -377,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
             orchestrator: 'Central coordination node that manages the entire agent workflow. Routes user queries to specialized agents and controls the information flow between them.',
             retriever: 'Specialized in retrieving relevant documents, context, and entities from knowledge sources. Provides the factual foundation needed for accurate responses.',
             synthesizer: 'Processes retrieved information and combines it with user instructions to generate coherent content and answers.',
-            critic: 'Reviews and validates content for accuracy, quality, and adherence to guidelines. Provides feedback to improve quality.',
+            critic: 'Reviews and validates content for accuracy, quality, and adherence to guidelines. Determines if the response meets quality thresholds and either approves it or refines the query to improve results. Will try up to 3 refinement iterations before accepting the best available response.',
             coder: 'Generates, reviews, and debugs code when programming tasks are requested.',
             adapter: 'Adapts generated content to match specified persona characteristics, tone, and style requirements.',
             presenter: 'Formats and prepares the final content for optimal presentation to the user.',
