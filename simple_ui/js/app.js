@@ -64,11 +64,19 @@ async function resetInterface() {
         queryInput.value = '';
         
         // Reset state
+        state.selectedDocuments = [];
         state.preprocessedDocuments = [];
+        
+        // Update document counter
+        updateDocCounter();
         
         // Update document selection UI to remove processed class
         document.querySelectorAll('.file-item.processed').forEach(item => {
             item.classList.remove('processed');
+        });
+        
+        document.querySelectorAll('.file-item.selected').forEach(item => {
+            item.classList.remove('selected');
         });
         
         // Update system stats
@@ -101,6 +109,10 @@ async function initApp() {
         
         // Initialize system monitor
         updateSystemMonitor();
+        
+        // Reset state and counter to ensure clean start
+        state.selectedDocuments = [];
+        updateDocCounter();
         
         // Test API connection
         const connectionStatus = await api.testConnection();
@@ -149,6 +161,9 @@ async function loadDocuments() {
 function renderDocumentsList(documents) {
     if (!documents || documents.length === 0) {
         filesContainer.innerHTML = '<div class="no-docs">No documents available.</div>';
+        // Make sure counter shows 0 when no documents available
+        state.selectedDocuments = [];
+        updateDocCounter();
         return;
     }
 
@@ -173,6 +188,12 @@ function renderDocumentsList(documents) {
 
     filesContainer.innerHTML = '';
     docElements.forEach(elem => filesContainer.appendChild(elem));
+    
+    // Ensure counter is updated after loading documents
+    if (state.selectedDocuments.length > 0) {
+        state.selectedDocuments = [];
+        updateDocCounter();
+    }
 }
 
 // Toggle document selection
