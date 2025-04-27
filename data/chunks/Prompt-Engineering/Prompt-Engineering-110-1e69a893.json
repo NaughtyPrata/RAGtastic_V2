@@ -1,0 +1,44 @@
+{
+  "id": "1e69a893",
+  "documentId": "Prompt-Engineering",
+  "content": " which means my partner’s \nage was 3 * 3 = 9 years.\n4. Now, I am 20 years old, which means my age has increased by 20 - 3 = 17 \nyears since I was 3 years old.\n5.  Since my partner’s age was 9 years when I was 3 years old, and my age has \nincreased by 17 years, my partner’s age must have also increased by 17 years.\n6.  Therefore, my partner’s current age is 9 + 17 = 26 years.\nSo, my partner is 26 years old.\nTable 12. An example of Chain of Thought prompting\nAlright, now the final answer is correc",
+  "index": 110,
+  "metadata": {
+    "title": "Prompt",
+    "pageCount": 68,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.7",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Creator": "Adobe InDesign 20.2 (Macintosh)",
+      "Producer": "Adobe PDF Library 17.0",
+      "CreationDate": "D:20250317134021-06'00'",
+      "ModDate": "D:20250317134026-06'00'",
+      "Trapped": {
+        "name": "False"
+      }
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "xmp:createdate": "2025-03-17T13:40:21-06:00",
+        "xmp:metadatadate": "2025-03-17T13:40:26-06:00",
+        "xmp:modifydate": "2025-03-17T13:40:26-06:00",
+        "xmp:creatortool": "Adobe InDesign 20.2 (Macintosh)",
+        "xmpmm:instanceid": "uuid:aebb7c2a-53ba-b94c-8938-e0de7b07db0e",
+        "xmpmm:originaldocumentid": "xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3",
+        "xmpmm:documentid": "xmp.id:0f4ab773-f90c-42bd-933d-fd517a340485",
+        "xmpmm:renditionclass": "proof:pdf",
+        "xmpmm:derivedfrom": "xmp.iid:ab3484fa-13dc-4387-bc8c-2a6b2b6d4457xmp.did:0fe2ab9f-5969-4fe1-9c1e-44086a118fd7xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3default",
+        "xmpmm:history": "convertedfrom application/x-indesign to application/pdfAdobe InDesign 20.2 (Macintosh)/2025-03-17T13:40:21-06:00",
+        "dc:format": "application/pdf",
+        "pdf:producer": "Adobe PDF Library 17.0",
+        "pdf:trapped": "False"
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T04:18:27.692Z",
+    "documentId": "Prompt-Engineering",
+    "chunkIndex": 110,
+    "chunkId": "1e69a893"
+  }
+}

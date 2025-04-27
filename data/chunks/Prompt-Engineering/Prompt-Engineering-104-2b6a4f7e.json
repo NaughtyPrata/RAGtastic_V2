@@ -1,0 +1,44 @@
+{
+  "id": "2b6a4f7e",
+  "documentId": "Prompt-Engineering",
+  "content": " to get better results on more \ncomplex tasks that require reasoning before responding as it’s a challenge with a zero-shot \nchain of thought.\nCoT has a lot of advantages. First of all, it’s low-effort while being very effective and works \nwell with off-the-shelf LLMs (so no need to finetune). You also get interpretability with CoT \nprompting, as you can learn from the LLM’s responses and see the reasoning steps that were \nfollowed. If there’s a malfunction, you will be able to identify it. Chai",
+  "index": 104,
+  "metadata": {
+    "title": "Prompt",
+    "pageCount": 68,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.7",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Creator": "Adobe InDesign 20.2 (Macintosh)",
+      "Producer": "Adobe PDF Library 17.0",
+      "CreationDate": "D:20250317134021-06'00'",
+      "ModDate": "D:20250317134026-06'00'",
+      "Trapped": {
+        "name": "False"
+      }
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "xmp:createdate": "2025-03-17T13:40:21-06:00",
+        "xmp:metadatadate": "2025-03-17T13:40:26-06:00",
+        "xmp:modifydate": "2025-03-17T13:40:26-06:00",
+        "xmp:creatortool": "Adobe InDesign 20.2 (Macintosh)",
+        "xmpmm:instanceid": "uuid:aebb7c2a-53ba-b94c-8938-e0de7b07db0e",
+        "xmpmm:originaldocumentid": "xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3",
+        "xmpmm:documentid": "xmp.id:0f4ab773-f90c-42bd-933d-fd517a340485",
+        "xmpmm:renditionclass": "proof:pdf",
+        "xmpmm:derivedfrom": "xmp.iid:ab3484fa-13dc-4387-bc8c-2a6b2b6d4457xmp.did:0fe2ab9f-5969-4fe1-9c1e-44086a118fd7xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3default",
+        "xmpmm:history": "convertedfrom application/x-indesign to application/pdfAdobe InDesign 20.2 (Macintosh)/2025-03-17T13:40:21-06:00",
+        "dc:format": "application/pdf",
+        "pdf:producer": "Adobe PDF Library 17.0",
+        "pdf:trapped": "False"
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T04:18:53.946Z",
+    "documentId": "Prompt-Engineering",
+    "chunkIndex": 104,
+    "chunkId": "2b6a4f7e"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "id": "Prompt-Engineering-46-df9b56bd",
+  "content": "2 years and i am older. now i am 40 years old, so my brother is 40 - 2 = 38 years old. the answer is 38. q: when i was 3 years old, my partner was 3 times my age. now, i am 20 years old. how old is my partner? let's think step by step. a: outputwhen i was 3 years old, my partner was 3 * 3 = 9 years old. that's an age difference of 6 years and my partner is older. now i am 20 years old, so my partner is 20 + 6 = 26 years old. the answer is 26. table 13. an example of chain of thought prompting with a single-shot chain of thought can be useful for various use-cases. think of code generation, for breaking down the request into a few steps, and mapping those to specific lines of code. or for creating synthetic data when you have some kind of seed like \"the product is called xyz, write a description guiding the model through the assumptions you would make based on the product given title.\" generally, any task that can be solved by 'talking through is a good candidate for a chain of thought.",
+  "metadata": {
+    "title": "Prompt",
+    "pageCount": 68,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.7",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Creator": "Adobe InDesign 20.2 (Macintosh)",
+      "Producer": "Adobe PDF Library 17.0",
+      "CreationDate": "D:20250317134021-06'00'",
+      "ModDate": "D:20250317134026-06'00'",
+      "Trapped": {
+        "name": "False"
+      }
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "xmp:createdate": "2025-03-17T13:40:21-06:00",
+        "xmp:metadatadate": "2025-03-17T13:40:26-06:00",
+        "xmp:modifydate": "2025-03-17T13:40:26-06:00",
+        "xmp:creatortool": "Adobe InDesign 20.2 (Macintosh)",
+        "xmpmm:instanceid": "uuid:aebb7c2a-53ba-b94c-8938-e0de7b07db0e",
+        "xmpmm:originaldocumentid": "xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3",
+        "xmpmm:documentid": "xmp.id:0f4ab773-f90c-42bd-933d-fd517a340485",
+        "xmpmm:renditionclass": "proof:pdf",
+        "xmpmm:derivedfrom": "xmp.iid:ab3484fa-13dc-4387-bc8c-2a6b2b6d4457xmp.did:0fe2ab9f-5969-4fe1-9c1e-44086a118fd7xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3default",
+        "xmpmm:history": "convertedfrom application/x-indesign to application/pdfAdobe InDesign 20.2 (Macintosh)/2025-03-17T13:40:21-06:00",
+        "dc:format": "application/pdf",
+        "pdf:producer": "Adobe PDF Library 17.0",
+        "pdf:trapped": "False"
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T00:09:58.549Z",
+    "documentId": "Prompt-Engineering",
+    "documentType": "pdf",
+    "filename": "Prompt-Engineering.pdf",
+    "extension": "pdf",
+    "directory": "/Users/raphael.moreno/Projects/mcp/sRAG/documents",
+    "headers": [],
+    "dates": [
+      {
+        "text": "2023-10-27",
+        "iso": "2023-10-27",
+        "position": 76848
+      },
+      {
+        "text": "september 29, 2006",
+        "iso": "2006-09-29",
+        "position": 48457
+      },
+      {
+        "text": "june 28, 2008",
+        "iso": "2008-06-28",
+        "position": 48494
+      }
+    ],
+    "contentTypes": {
+      "hasCode": true,
+      "hasTables": false,
+      "hasLists": false,
+      "codeBlocks": 1,
+      "tables": 0,
+      "lists": 0
+    },
+    "entities": {
+      "vaultTecTerms": [],
+      "locations": [],
+      "organizations": [],
+      "technicalTerms": [
+        "llm",
+        "prompting",
+        "token",
+        "classification",
+        "language model",
+        "machine learning",
+        "training",
+        "ai",
+        "natural language",
+        "processing",
+        "parsing",
+        "retrieval",
+        "augmented generation",
+        "rag"
+      ]
+    },
+    "vaultTecRelevance": {
+      "score": 0,
+      "isRelevant": false,
+      "vaultTecReferences": 0,
+      "vaultReferences": 0
+    },
+    "chunkIndex": 46,
+    "chunkCount": 104,
+    "chunkStrategy": "hybrid"
+  }
+}

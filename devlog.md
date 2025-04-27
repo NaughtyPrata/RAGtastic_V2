@@ -1,47 +1,41 @@
 # sRAG Development Log
 
-## 2025-04-26: UI Enhancements - CRT Effects (Update 13)
+## 2025-04-27 - RAG System Implementation
 
-### Work Completed:
-- [x] Increased animated scanline opacity from 0.05 back to 0.1
-- [x] Kept the smooth gradient transition for seamless animation
-- [x] Maintained the slower 15s animation cycle for subtle movement
+### Completed
+- Set up basic project structure
+- Implemented document preprocessing functionality
+- Created PDF processor for document parsing
+- Implemented document chunking with hybrid strategies
+- Created Express API endpoints for document operations
+- Designed and implemented Vault-Tec themed UI
+- Connected UI to backend API
+- Updated UI to make API calls to the server
+- Implemented simple RAG retrieval mechanism
+- Added Groq integration for LLM component
 
-### Current Settings:
-- Moving Scanline: opacity 0.1, 300px height, 15s animation cycle, gradient edges
-- Horizontal Scanlines: opacity 0.05, 4px spacing, static effect
-- Vignette: dark corners at 0.4 opacity with inset shadow
-- Grid Lines: disabled/commented out
+### Test Results
+- Successfully processed Prompt-Engineering.pdf into 263 chunks
+- Verified chunk storage in data/chunks directory
+- Simple keyword-based retrieval finding relevant chunks
+- UI correctly displaying processed documents
 
-=======
-=======
-=======
+### Next Steps
+- Add proper Groq API key for LLM component
+- Implement embedding generation for semantic search
+- Add support for more document types (TXT, DOCX, etc.)
+- Enhance UI with more Vault-Tec themed elements
+- Implement the full agentic flow as per design
 
-### Technical Solutions:
-- Created both effects directly in HTML to bypass JavaScript issues
-- Used CSS background image gradient technique to create grid lines
-- Maintained the Fallout Vault-Tec green color scheme (rgba(53, 126, 60, 0.8))
-- Ensured all effects are non-interactive (pointer-events: none)
+### Known Issues
+- RAG API requires valid Groq API key
+- Simple retrieval uses keyword matching instead of semantic search
+- No proper error handling for invalid documents
+- UI needs more Fallout theming
 
-=======
-=======
-=======
-=======
-- [x] Further decreased static grid lines opacity from 0.15 to 0.1 for very subtle background grid
-- [x] Adjusted TV effect vignette:
-  - Maintained center transparency at 40%
-  - Lightened the dark corners to 0.4 opacity (from 0.7)
-
-### Previous Changes:
-- [x] Reduced scanlines opacity from 0.8 to 0.4
-- [x] Lessened static grid lines opacity from 0.25 to 0.15
-- [x] Enhanced TV effect vignette with stronger gradient and box-shadow
-
-### Technical Details:
-- Modified `/simple_ui/css/components/terminal.css` for scanlines and vignette changes
-- Modified `/simple_ui/css/grid-overlay.css` for grid opacity adjustment
-
-### Next Steps:
-- Consider adding more CRT effects like bloom/glow
-- Optimize performance for lower-end devices
-- Add toggle options for users to adjust effect intensity
+## Next Phase Planning
+- Implement proper vector embedding for chunks
+- Add FAISS for vector search
+- Implement embedding cache for faster retrieval
+- Add proper agent conversation flow
+- Enhance UI with more Vault-Tec terminal elements

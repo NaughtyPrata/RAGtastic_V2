@@ -1,6 +1,6 @@
 /**
  * UI application script for Vault-Tec Terminal interface
- * This is a UI-only demo with all logic removed
+ * Fallout Vault-Tec themed RAG implementation
  */
 
 // DOM elements
@@ -11,13 +11,11 @@ const queryInput = document.getElementById('query-input');
 const submitButton = document.getElementById('submit-query');
 const preprocessButton = document.getElementById('preprocess-btn');
 const resetButton = document.getElementById('left-reset-btn');
-const answerDisplay = document.getElementById('answer-display');
-const sourcesContainer = document.getElementById('sources-container');
+const conversation = document.getElementById('conversation');
 const filesContainer = document.getElementById('files-container');
 const docCounter = document.getElementById('doc-counter');
-const conversation = document.getElementById('conversation');
 
-// App state - UI demo only
+// App state
 const state = {
     selectedDocuments: [],
     preprocessedDocuments: [],
@@ -25,7 +23,7 @@ const state = {
     isPreprocessing: false
 };
 
-// Reset interface - UI only function
+// Reset interface
 function resetInterface() {
     // Clear conversation
     conversation.innerHTML = '';
@@ -77,7 +75,7 @@ function resetInterface() {
     animateElements();
 }
 
-// Initialize the app - UI setup only
+// Initialize the app
 async function initApp() {
     try {
         // Start system time updates
@@ -87,8 +85,13 @@ async function initApp() {
         // Initialize system monitor
         updateSystemMonitor();
         
+        // Test API connection
+        const connectionStatus = await api.testConnection();
+        if (connectionStatus.status !== 'connected') {
+            showError('Could not connect to API. Please check if server is running.');
+        }
 
-        // Get mock documents for UI demo
+        // Get documents
         await loadDocuments();
 
         // Initialize event listeners
@@ -104,7 +107,8 @@ async function initApp() {
         updateSystemStats({
             latency: '0ms',
             tokens: '0',
-            score: '100%'
+            score: '100%',
+            docs: '0'
         });
     } catch (error) {
         console.error('Initialization error:', error);
@@ -112,9 +116,10 @@ async function initApp() {
     }
 }
 
-// Load documents - simplified for UI demo
+// Load documents from API
 async function loadDocuments() {
     try {
+        filesContainer.innerHTML = '<div class="loading">Loading documents...</div>';
         const documents = await api.listDocuments();
         renderDocumentsList(documents);
     } catch (error) {
@@ -123,7 +128,7 @@ async function loadDocuments() {
     }
 }
 
-// Render documents list - UI only function
+// Render documents list
 function renderDocumentsList(documents) {
     if (!documents || documents.length === 0) {
         filesContainer.innerHTML = '<div class="no-docs">No documents available.</div>';
@@ -153,7 +158,7 @@ function renderDocumentsList(documents) {
     docElements.forEach(elem => filesContainer.appendChild(elem));
 }
 
-// Toggle document selection - UI only function
+// Toggle document selection
 function toggleDocumentSelection(element, document) {
     element.classList.toggle('selected');
     
@@ -167,17 +172,17 @@ function toggleDocumentSelection(element, document) {
     updatePreprocessButton();
 }
 
-// Update document counter - UI only function
+// Update document counter
 function updateDocCounter() {
     docCounter.textContent = `${state.selectedDocuments.length} SELECTED`;
 }
 
-// Update preprocess button state - UI only function
+// Update preprocess button state
 function updatePreprocessButton() {
     preprocessButton.disabled = state.selectedDocuments.length === 0 || state.isPreprocessing;
 }
 
-// Set up event listeners - UI only function
+// Set up event listeners
 function setupEventListeners() {
     // Update sources count display
     sourcesCountInput.addEventListener('input', () => {
@@ -202,7 +207,7 @@ function setupEventListeners() {
     });
 }
 
-// Handle preprocessing documents - UI only mock
+// Handle preprocessing documents
 async function handlePreprocessDocuments() {
     if (state.selectedDocuments.length === 0) {
         showError('Please select at least one document to preprocess.');
@@ -217,15 +222,27 @@ async function handlePreprocessDocuments() {
         // Show preprocessing message
         addSystemMessage('Preprocessing documents... This may take a moment.');
         
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Call API to preprocess documents
+        const result = await api.preprocessDocuments(state.selectedDocuments, {
+            chunkSize: 500,
+            chunkOverlap: 100,
+            chunkingStrategy: 'hybrid',
+            extractMetadata: true
+        });
         
-        // Update UI to show processed documents
-        state.preprocessedDocuments = state.selectedDocuments.slice();
-        updateProcessedDocuments();
-        
-        // Show success message
-        addSystemMessage(`Successfully preprocessed ${state.preprocessedDocuments.length} document(s).`);
+        if (result.success) {
+            // Update UI to show processed documents
+            state.preprocessedDocuments = state.selectedDocuments.slice();
+            updateProcessedDocuments();
+            
+            // Show success message
+            addSystemMessage(`Successfully preprocessed ${result.count} document(s) into ${result.totalChunks} chunks.`);
+        } else {
+            showError(`Preprocessing failed: ${result.error || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Preprocessing error:', error);
+        showError(`Preprocessing error: ${error.message}`);
     } finally {
         state.isPreprocessing = false;
         preprocessButton.disabled = false;
@@ -234,7 +251,7 @@ async function handlePreprocessDocuments() {
     }
 }
 
-// Update UI to show processed documents - UI only function
+// Update UI to show processed documents
 function updateProcessedDocuments() {
     // Mark processed documents in the UI
     document.querySelectorAll('.file-item').forEach(item => {
@@ -251,7 +268,7 @@ function updateProcessedDocuments() {
     document.getElementById('stats-docs').textContent = state.preprocessedDocuments.length;
 }
 
-// Update system monitor with processed documents - UI only function
+// Update system monitor with processed documents
 function updateSystemMonitor() {
     const systemInfo = document.querySelector('.system-info');
     let infoHtml = `
@@ -278,7 +295,7 @@ function updateSystemMonitor() {
     systemInfo.innerHTML = infoHtml;
 }
 
-// Handle query submission - UI demo only
+// Handle query submission
 async function handleSubmitQuery() {
     const queryType = queryTypeSelect.value;
     const question = queryInput.value.trim();
@@ -302,26 +319,43 @@ async function handleSubmitQuery() {
     setLoading(true);
     
     try {
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        let response;
+        const options = {
+            numResults: sourcesCount,
+            similarityThreshold: 0.3,
+            useHybridSearch: true
+        };
         
-        // Display mock responses based on query type
+        // Call appropriate API based on query type
         switch (queryType) {
             case 'query':
-                displayAnswer("This is a mock response for the UI demo. In a real implementation, this would show an answer generated from the selected documents.");
+                response = await api.query(question, options);
+                displayAnswer(response.response || response.answer || 'No response received.');
                 break;
                 
             case 'answer':
-                displayAnswer("This is a simple mock answer for the UI demo.");
+                response = await api.getAnswer(question, options);
+                displayAnswer(response.response || response.answer || 'No answer received.');
                 break;
                 
             case 'sources':
-                // Show a sources-only message
-                addAIMessage("I've found these relevant sources for your query (demo only).");
+                response = await api.getSources(question, sourcesCount, options);
+                // Show a sources-only message with the retrieved sources
+                addAIMessage("I've found these relevant sources for your query:\n\n" + 
+                    (response.sources ? formatSources(response.sources) : 'No sources found.'));
                 break;
                 
             default:
                 showError('Unknown query type.');
+        }
+        
+        // Update stats with usage information if available
+        if (response && response.usage) {
+            updateSystemStats({
+                latency: `${response.metrics?.latency || 0}ms`,
+                tokens: response.usage.total_tokens || 0,
+                score: '100%'
+            });
         }
     } catch (error) {
         console.error('Query processing error:', error);
@@ -334,12 +368,26 @@ async function handleSubmitQuery() {
     queryInput.value = '';
 }
 
-// Display answer - simplified for UI demo
+// Format sources for display
+function formatSources(sources) {
+    if (!sources || !Array.isArray(sources) || sources.length === 0) {
+        return 'No sources available.';
+    }
+    
+    return sources.map((source, index) => {
+        const sourceName = source.metadata?.source || 'Unknown source';
+        const sourceContent = source.page_content || source.content || 'No content available.';
+        
+        return `Source ${index + 1}: ${sourceName}\n${truncateText(sourceContent, 200)}`;
+    }).join('\n\n');
+}
+
+// Display answer
 function displayAnswer(answer) {
     addAIMessage(answer);
 }
 
-// Add system message - UI only function
+// Add system message
 function addSystemMessage(message) {
     const messageContainer = document.createElement('div');
     messageContainer.className = 'message-container';
@@ -358,7 +406,7 @@ function addSystemMessage(message) {
     conversation.scrollTop = conversation.scrollHeight;
 }
 
-// Add user message - UI only function
+// Add user message
 function addUserMessage(message) {
     // Create a new user message container
     const userMessageContainer = document.createElement('div');
@@ -378,7 +426,7 @@ function addUserMessage(message) {
     conversation.scrollTop = conversation.scrollHeight;
 }
 
-// Add AI message - UI only function
+// Add AI message
 function addAIMessage(message) {
     // Create a new AI message container
     const aiMessageContainer = document.createElement('div');
@@ -396,29 +444,20 @@ function addAIMessage(message) {
     
     conversation.appendChild(aiMessageContainer);
     conversation.scrollTop = conversation.scrollHeight;
-    
-    // Update system stats
-    updateSystemStats({
-        latency: Math.floor(Math.random() * 200) + 100 + 'ms',
-        tokens: Math.floor(Math.random() * 300) + 100,
-        score: Math.floor(Math.random() * 20) + 80 + '%'
-    });
 }
 
-// Update system stats - UI only function
+// Update system stats
 function updateSystemStats(stats) {
     if (stats.latency) document.getElementById('stats-latency').textContent = stats.latency;
     if (stats.tokens) document.getElementById('stats-tokens').textContent = stats.tokens;
     if (stats.score) document.getElementById('stats-score').textContent = stats.score;
-    
-    // Update document count
-    document.getElementById('stats-docs').textContent = state.preprocessedDocuments.length;
+    if (stats.docs) document.getElementById('stats-docs').textContent = stats.docs;
     
     // Update system time
     updateSystemTime();
 }
 
-// Update system time - UI only function
+// Update system time
 function updateSystemTime() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -428,7 +467,7 @@ function updateSystemTime() {
     document.querySelector('.system-time').textContent = `[${hours}:${minutes}:${seconds}]`;
 }
 
-// Set loading state - UI only function
+// Set loading state
 function setLoading(isLoading) {
     state.loading = isLoading;
     submitButton.disabled = isLoading;
@@ -440,7 +479,7 @@ function setLoading(isLoading) {
     }
 }
 
-// Show error message - UI only function
+// Show error message
 function showError(message) {
     // Add to system info
     const systemInfo = document.querySelector('.system-info');
@@ -454,16 +493,18 @@ function showError(message) {
     
     // Scroll system info to bottom if needed
     systemInfo.scrollTop = systemInfo.scrollHeight;
+    
+    console.error(message);
 }
 
-// Helper function to truncate text - UI utility
+// Helper function to truncate text
 function truncateText(text, maxLength) {
     if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
 }
 
-// Format content for display - UI utility
+// Format content for display
 function formatContent(content) {
     if (!content) return '';
     
@@ -473,7 +514,7 @@ function formatContent(content) {
     return content;
 }
 
-// Animate elements using GSAP - UI animation only
+// Animate elements using GSAP
 function animateElements() {
     gsap.from('.panel-header', { 
         y: -50, 

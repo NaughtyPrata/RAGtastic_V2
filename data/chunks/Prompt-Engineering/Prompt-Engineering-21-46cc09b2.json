@@ -1,0 +1,100 @@
+{
+  "id": "Prompt-Engineering-21-46cc09b2",
+  "content": "op - p1 promptparse a customer's pizza order into valid json: example: i want a small pizza with cheese, tomato sauce, and pepperoni. json response: ``` { \"size\": \"small\", \"type \": \" normal\", \"ingredients\": [[\"cheese\", \" tomato sauce\", \" peperoni\"]] } ``` continues next page... prompt engineering february 202517 promptexample: can i get a large pizza with tomato sauce, basil and mozzarella { \"size \": \" large\", \"type \": \" normal\", \"ingredients\": [[ \"tomato sauce\", \" bazel\", \" mozzarella\"]] } now, i would like a large pizza, with the first half cheese and mozzarella. and the other tomato sauce, ham and pineapple. json response: output``` { \"size \": \" large\", \"type \": \" half-half\", \"ingredients\": [[\"cheese\", \"mozzarella\"], [\"tomato sauce\", \"ham\", \"pineapple\"]] } ``` table 2. an example of few-shot prompting when you choose examples for your prompt, use examples that are relevant to the task you want to perform. the examples should be diverse, of high quality, and well written. one small m",
+  "metadata": {
+    "title": "Prompt",
+    "pageCount": 68,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.7",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Creator": "Adobe InDesign 20.2 (Macintosh)",
+      "Producer": "Adobe PDF Library 17.0",
+      "CreationDate": "D:20250317134021-06'00'",
+      "ModDate": "D:20250317134026-06'00'",
+      "Trapped": {
+        "name": "False"
+      }
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "xmp:createdate": "2025-03-17T13:40:21-06:00",
+        "xmp:metadatadate": "2025-03-17T13:40:26-06:00",
+        "xmp:modifydate": "2025-03-17T13:40:26-06:00",
+        "xmp:creatortool": "Adobe InDesign 20.2 (Macintosh)",
+        "xmpmm:instanceid": "uuid:aebb7c2a-53ba-b94c-8938-e0de7b07db0e",
+        "xmpmm:originaldocumentid": "xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3",
+        "xmpmm:documentid": "xmp.id:0f4ab773-f90c-42bd-933d-fd517a340485",
+        "xmpmm:renditionclass": "proof:pdf",
+        "xmpmm:derivedfrom": "xmp.iid:ab3484fa-13dc-4387-bc8c-2a6b2b6d4457xmp.did:0fe2ab9f-5969-4fe1-9c1e-44086a118fd7xmp.did:ed4482ce-5b28-4675-9403-ce4af61a07c3default",
+        "xmpmm:history": "convertedfrom application/x-indesign to application/pdfAdobe InDesign 20.2 (Macintosh)/2025-03-17T13:40:21-06:00",
+        "dc:format": "application/pdf",
+        "pdf:producer": "Adobe PDF Library 17.0",
+        "pdf:trapped": "False"
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T00:05:50.278Z",
+    "documentId": "Prompt-Engineering",
+    "documentType": "pdf",
+    "filename": "Prompt-Engineering.pdf",
+    "extension": "pdf",
+    "directory": "/Users/raphael.moreno/Projects/mcp/sRAG/documents",
+    "headers": [],
+    "dates": [
+      {
+        "text": "2023-10-27",
+        "iso": "2023-10-27",
+        "position": 76848
+      },
+      {
+        "text": "september 29, 2006",
+        "iso": "2006-09-29",
+        "position": 48457
+      },
+      {
+        "text": "june 28, 2008",
+        "iso": "2008-06-28",
+        "position": 48494
+      }
+    ],
+    "contentTypes": {
+      "hasCode": true,
+      "hasTables": false,
+      "hasLists": false,
+      "codeBlocks": 1,
+      "tables": 0,
+      "lists": 0
+    },
+    "entities": {
+      "vaultTecTerms": [],
+      "locations": [],
+      "organizations": [],
+      "technicalTerms": [
+        "llm",
+        "prompting",
+        "token",
+        "classification",
+        "language model",
+        "machine learning",
+        "training",
+        "ai",
+        "natural language",
+        "processing",
+        "parsing",
+        "retrieval",
+        "augmented generation",
+        "rag"
+      ]
+    },
+    "vaultTecRelevance": {
+      "score": 0,
+      "isRelevant": false,
+      "vaultTecReferences": 0,
+      "vaultReferences": 0
+    },
+    "chunkIndex": 21,
+    "chunkCount": 104,
+    "chunkStrategy": "hybrid"
+  }
+}
