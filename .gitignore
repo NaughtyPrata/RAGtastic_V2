@@ -30,6 +30,7 @@ ENV/
 
 # Data files
 data/faiss_index/
+data/chunks/
 *.faiss
 *.pkl
 
