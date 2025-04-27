@@ -1,0 +1,37 @@
+{
+  "id": "2bc930cf",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "the chances of drawing an ace on the next draw are\nreduced to three in fifty-one. Thus, the probability of drawing two consecu-\ntive aces without returning the first draw to the deck is 4/52 ×3/51, or 1 in\n221, which is considerably lower than 1 in 169.\nIf we want to extend Rule 2 to cover cases in which the events are notin-\ndependent, then we will have to speak of the probability of one event occur-\nring given that another has occurred. The probability that h2will occur given\nthat h1has occurr",
+  "index": 1958,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:06:33.223Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1958,
+    "chunkId": "2bc930cf",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}

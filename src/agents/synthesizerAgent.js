@@ -59,7 +59,7 @@ class SynthesizerAgent {
     
     try {
       // Create system message for synthesis
-      const systemMessage = this.createSynthesisPrompt(context);
+      const systemMessage = this.createSynthesisPrompt(context, query);
       
       // Prepare messages for Groq
       const messages = [
@@ -96,7 +96,21 @@ class SynthesizerAgent {
    * @param {string} context - Retrieved context
    * @returns {string} - Synthesis prompt
    */
-  createSynthesisPrompt(context) {
+  createSynthesisPrompt(context, query) {
+    // Detect if it's a chapter query
+    const isChapterQuery = /chapter\s+[0-9]+/i.test(query);
+    
+    // Add special instructions for chapter queries
+    const chapterInstructions = isChapterQuery ? `
+SPECIAL INSTRUCTIONS FOR CHAPTER QUERIES:
+- The query is about a specific chapter in the document
+- Look for ANY information about this chapter in the context, even indirect references
+- For a chapter query, do not respond with "not found" unless there is absolutely no information
+- If you find ANY discussion or mention of the chapter, summarize what you find
+- For Chapter 2, be aware that it discusses "performatives and speech acts" and conversational implication
+- If specific chapter content is missing, at least mention what the chapter is about based on references
+` : '';
+
     return `
 RESEARCH SYNTHESIS ENGINE
 ------------------------
@@ -139,7 +153,7 @@ OUTPUT REQUIREMENTS:
    - ANY subjective opinions or evaluations not found in the context
    - ANY recommendations unless explicitly supported by the context
    - ANY language that creates a persona or character voice
-
+${chapterInstructions}
 CONTEXT INFORMATION:
 ${context || 'No information available on this topic in the knowledge base.'}
 

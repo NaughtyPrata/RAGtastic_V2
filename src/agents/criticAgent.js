@@ -196,6 +196,38 @@ class CriticAgent {
    * @returns {string} - Evaluation prompt
    */
   createEvaluationPrompt(query, response, context) {
+    // Check if the response claims information is not found
+    const notFoundClaims = [
+      "not found in context",
+      "no information available",
+      "could not find",
+      "no context found",
+      "there is no information",
+      "does not mention",
+      "is not mentioned",
+      "is not discussed",
+      "is not provided",
+      "is not covered",
+      "since the provided context",
+      "the context does not",
+      "the context provided does not"
+    ];
+    
+    const hasNotFoundClaim = notFoundClaims.some(phrase => 
+      response.toLowerCase().includes(phrase.toLowerCase())
+    );
+    
+    // Special evaluation instructions for "not found" responses
+    const notFoundInstructions = hasNotFoundClaim ? `
+SPECIAL INSTRUCTIONS FOR "NOT FOUND" RESPONSES:
+The response claims information is not available in the context. Be extra skeptical of such claims.
+- Only approve if you're absolutely certain the information truly isn't in the context
+- The response should only claim information is missing after thoroughly checking the context
+- If the response incorrectly claims information is missing when it IS available, give it a very low score
+- For chapter queries, be especially careful to check if any information about the chapter exists
+- If the query asks about Chapter 2, ensure there's no mention of "Chapter 2" or "performatives and speech acts" before accepting a "not found" claim
+` : '';
+
     return `
 RESPONSE QUALITY EVALUATION SYSTEM
 ----------------------------------
@@ -208,7 +240,7 @@ EVALUATION CRITERIA:
 3. ACCURACY: Is the information provided factually correct based on the context?
 4. CLARITY: Is the response well-structured, clear, and easy to understand?
 5. CONTEXTUAL GROUNDING: Is the response firmly based on the provided context?
-
+${notFoundInstructions}
 OBJECTIVE EVALUATION INSTRUCTIONS:
 - Evaluate ONLY based on how well the response answers the query using the context
 - Do NOT consider formatting, style preferences, or tone

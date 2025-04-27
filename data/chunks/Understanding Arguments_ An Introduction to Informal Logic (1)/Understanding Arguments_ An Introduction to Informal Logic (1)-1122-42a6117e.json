@@ -1,0 +1,37 @@
+{
+  "id": "42a6117e",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": " for validity by following\nthese simple steps:\n1.  Provide a column for each premise and the conclusion.\n2.  Fill in truth values in each column.\n3.  Underline each row where all of the premises are true.\n4.  Mark each row “OK” if the conclusion is true on that row.\n5.  Mark each row “Invalid” if the conclusion is false on that row.\n6.  If any row is marked “Invalid,” the argument form is invalid.\n7.  If no row is marked “Invalid,” the argument form is valid.\nUsing the truth table technique outl",
+  "index": 1122,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:06:43.256Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1122,
+    "chunkId": "42a6117e",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}
