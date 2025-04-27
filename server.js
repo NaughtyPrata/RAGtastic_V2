@@ -82,21 +82,24 @@ app.post('/api/synthesizer/query', async (req, res) => {
     
     if (!context || context.trim() === '') {
       return res.json({
-        success: true,
-        query,
-        response: "I'm sorry, but I couldn't find any relevant information in the Vault-Tec database to answer your query. Please try a different question or preprocess additional documents.",
-        context: 'No context found',
-        sources: []
+      success: true,
+      query,
+      response: "No relevant information found in the database to answer your query. Please try a different question or preprocess additional documents.",
+      context: 'No context found',
+      sources: []
       });
     }
     
     // 2. Synthesize response
     const synthesizedResult = await synthesizerAgent.synthesize(query, context);
     
+    // 3. Apply post-processing filter to catch any remaining roleplay elements
+    const filteredResponse = removeRoleplayElements(synthesizedResult.response);
+    
     return res.json({
       success: true,
       query,
-      response: synthesizedResult.response,
+      response: filteredResponse,
       context: `Context used (${context.length} chars)`,
       sources: [],
       usage: synthesizedResult.usage
@@ -155,10 +158,13 @@ app.post('/api/retriever/query', async (req, res) => {
     // Extract response
     const response = completion.choices[0].message.content;
     
+    // Apply post-processing filter to catch any remaining roleplay elements
+    const filteredResponse = removeRoleplayElements(response);
+    
     return res.json({
       success: true,
       query,
-      response,
+      response: filteredResponse,
       context: combinedContext ? `Context used (${combinedContext.length} chars)` : 'No context found',
       sources: [],
       usage: completion.usage
@@ -422,42 +428,172 @@ async function getContextForQuery(query, options = {}) {
  */
 function createSystemMessage(context, query) {
   return `
-VAULT-TEC INFORMATION RETRIEVAL SYSTEM V2.3.1
---------------------------------------------
+ACADEMIC INFORMATION RETRIEVAL SYSTEM
+---------------------------------------------
 
-AUTHORIZATION: LEVEL 4 CLEARANCE GRANTED
+CRITICAL INSTRUCTION: You are a professional information retrieval system designed for academic research. You process and present information in a structured, factual manner without embellishment.
 
-You are the Vault-Tec Information Retrieval System, designed to provide accurate 
-information based on the retrieved context from the Vault-Tec knowledge database.
-Your primary function is to assist Vault Dwellers by answering their questions
-using only the provided context.
+ABSOLUTE PROHIBITIONS:
+- NO greetings, salutations, or conversational openings
+- NO fictional references, themed content, or fictional terminology of any kind
+- NO sign-offs, closing phrases, or offers of further assistance
+- NO self-references ("I", "me", "my") or user-references ("you", "your")
+- NO questions directed at the user
+- NO apologetic language or courtesy phrases
+- NO subjective evaluations or personal opinions
+- NO roleplay, personas, or character voices
 
-SYSTEM PARAMETERS:
-- Answer questions based ONLY on the context provided
-- If the context doesn't contain relevant information, inform the user that the 
-  Vault-Tec database does not have the requested information
-- Maintain a helpful and friendly tone in the style of a Vault-Tec AI assistant
-- Use appropriate Fallout universe terminology and references when applicable
-- Format responses for readability with markdown when appropriate
-- Include relevant citations when possible
-
-WARNING: Unauthorized use of the Vault-Tec Information System is punishable under 
-Vault regulations section 7.3.B. All interactions are logged and monitored.
+REQUIRED RESPONSE FORMAT:
+- Begin with direct, factual information relevant to the query
+- Use academic, neutral, and professional language throughout
+- Structure information with appropriate headings and subheadings
+- Employ bullet points or numbered lists for multiple items
+- Present only factual content extracted from the provided context
+- State factual limitations when information is insufficient or missing
+- Use markdown formatting for improved readability when appropriate
 
 CONTEXT INFORMATION:
-${context || 'No relevant information found in the Vault-Tec database.'}
+${context || 'No relevant information found in the database.'}
 
-TASK:
-Answer the user query based only on the above context information. Maintain the
-Vault-Tec assistant persona in your response.
+EXTRACTION REQUIREMENTS:
+Extract and present only factual information from the context that directly answers the query. Structure the information in a clear, academic format free from narrative elements, subjective commentary, or any kind of roleplay.
 
-USER QUERY:
+QUERY FOR EXTRACTION:
 ${query}
 `;
 }
 
+/**
+ * Remove any roleplay elements from the response
+ * @param {string} text - The text to filter
+ * @returns {string} - Filtered text
+ */
+function removeRoleplayElements(text) {
+  if (!text) return text;
+  
+  // Start with aggressive preprocessing
+  let filtered = text;
+  
+  // Replace some well-known problematic terms immediately
+  filtered = filtered
+    .replace(/vault(-| )?tec/gi, 'Information System')
+    .replace(/vault dweller/gi, 'user')
+    .replace(/overseer/gi, 'administrator')
+    .replace(/wasteland/gi, 'environment')
+    .replace(/fallout/gi, 'effects')
+    .replace(/\*\*(vault(-| )?tec|authorization|clearance)[^\n]*\*\*/gi, '')
+    .replace(/^\*\*[^\n]*\*\*/i, ''); // Remove bold header with title
+  
+  // Define patterns to remove
+  const patterns = [
+    // Greetings and salutations
+    /^(Hello|Hi|Hey|Greetings|Welcome|Good (morning|afternoon|evening)|Greetings|Salutations).*?(,|!|\.|:)/i,
+    
+    // Science fiction theme references - comprehensive set
+    /(Vault(-| )Tec|Vault(| )(Dweller|\d+)|Overseer|Wasteland|Fallout|Pip(-| )Boy|Nuka(-| )Cola|RobCo|Zeta|Brotherhood of Steel|NCR|Enclave|Super Mutant|Ghoul|Radiated|Rad(|-)(away|roach|x)|Mr\. Handy|Liberty Prime|S\.P\.E\.C\.I\.A\.L)/gi,
+    
+    // Common sign-offs
+    /(If you (have|need) any (more|other|further) (questions|assistance).*?$|Let me know if you need anything else.*?$|I hope this (helps|information is helpful).*?$|Happy to assist|Feel free to ask)/i,
+    
+    // Self-references and AI language
+    /(I('m| am) (happy|glad|pleased|here|excited) to (help|assist).*?(with your|you).*?(query|question|request)|As (requested|an AI|per your request)|I (would|can|could|will) (suggest|recommend|provide|assist)|As your (assistant|helper)|I don't have (personal|emotions|feelings))/i,
+    
+    // Fictional character references
+    /(Sole Survivor|Courier|Lone Wanderer|Chosen One|Vault Hunter|Initiate|Paladin|Elder|Minutemen|Raider|Synth|Institute|Diamond City|New Vegas|Capital Wasteland|Mojave|Commonwealth|Appalachia)/gi,
+    
+    // Science fiction artifacts and items
+    /(Power Armor|Fat Man|Plasma (Rifle|Pistol)|Laser (Rifle|Pistol)|Stimpak|Radaway|Bottle Cap|Fusion Core|Nuka(-| )Cola|Quantum|VATS|Dogmeat|Codsworth|Protectron|Deathclaw|Bloatfly|Mirelurk)/gi,
+    
+    // Meta references to themed content
+    /(Post(|-| )apocalyptic|Retro(|-| )futuristic|1950s aesthetic|Atomic age|Nuclear (war|holocaust|winter|fallout)|Radiation poisoning|Mutant|Mutation|Rads)/gi,
+    
+    // Entire greeting paragraphs or sections
+    /^([^\n]+greetings[^\n]+\n|[^\n]+welcome[^\n]+\n|[^\n]+(vault|overseer)[^\n]+\n)/gi,
+    
+    // Sections that introduce roleplay
+    /(in the (Vault|Wasteland)|Vault(-| )Tec (database|records)|my friend|fellow dweller)/gi,
+    
+    // Imperatives common to roleplay personas
+    /(buck(le)? up|get ready|strap (in|on))/gi,
+    
+    // References to clearance levels
+    /((level|clearance) [\d]+ (clearance|access|authorized|granted)|(clearance|access) (level|authorized) [\d]+)/gi,
+    
+    // Exclamation patterns (reduce excessive enthusiasm)
+    /(![^\n]*!|\s+!\s+)/g
+  ];
+  
+  // Apply each pattern with multiple passes for thorough cleansing
+  for (let i = 0; i < 2; i++) {
+    patterns.forEach(pattern => {
+      filtered = filtered.replace(pattern, '');
+    });
+  }
+  
+  // Handle multi-paragraph content
+  const paragraphs = filtered.split('\n\n');
+  
+  // Check and potentially remove problematic first paragraph
+  if (paragraphs.length > 1) {
+    const firstPara = paragraphs[0].toLowerCase();
+    if (
+      firstPara.includes('vault') || 
+      firstPara.includes('wasteland') || 
+      firstPara.includes('fallout') || 
+      firstPara.includes('welcome') || 
+      firstPara.includes('greetings') ||
+      firstPara.includes('authorization') ||
+      firstPara.includes('clearance') ||
+      firstPara.includes('retrieval system') ||
+      firstPara.includes('information system') ||
+      firstPara.includes('granted')
+    ) {
+      // Remove the problematic first paragraph
+      paragraphs.shift();
+    }
+  }
+  
+  // Check and potentially remove problematic last paragraph (conclusions, sign-offs)
+  if (paragraphs.length > 1) {
+    const lastPara = paragraphs[paragraphs.length - 1].toLowerCase();
+    if (
+      lastPara.includes('now, if you') || 
+      lastPara.includes('remember') || 
+      lastPara.includes('good luck') || 
+      lastPara.includes('until next time') ||
+      lastPara.includes('hope this helps') ||
+      lastPara.includes('please feel free')
+    ) {
+      // Remove the problematic last paragraph
+      paragraphs.pop();
+    }
+  }
+  
+  // Rebuild the text
+  filtered = paragraphs.join('\n\n');
+  
+  // Clean up any resulting double spaces or blank lines
+  filtered = filtered.replace(/\n\s*\n/g, '\n\n')
+                     .replace(/  +/g, ' ')
+                     .replace(/\n{3,}/g, '\n\n') // No more than double line breaks
+                     .trim();
+                     
+  // Fix for specific cases where entire text is problematic
+  if (filtered.toLowerCase().includes('vault-tec') || filtered.toLowerCase().includes('dweller')) {
+    // If we still have these terms after all our filtering, take more drastic measures
+    filtered = filtered
+      .replace(/vault(-| )?tec/gi, '')
+      .replace(/vault dweller/gi, '')
+      .replace(/dweller/gi, '')
+      .replace(/information retrieval/gi, 'Information')
+      .replace(/(bucket|buckle) up/gi, '');
+  }
+  
+  return filtered;
+}
+
 // Start the server
 app.listen(PORT, () => {
-  log(`VAULT-TEC INFORMATION RETRIEVAL SYSTEM started on port ${PORT}`);
+  log(`INFORMATION RETRIEVAL SYSTEM started on port ${PORT}`);
   log(`Open your browser to http://localhost:${PORT}`);
 });
