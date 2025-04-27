@@ -217,6 +217,9 @@ class CriticAgent {
       response.toLowerCase().includes(phrase.toLowerCase())
     );
     
+    // Check if the response contains a request for more information
+    const hasResearchNotes = response.toLowerCase().includes('research notes');
+    
     // Special evaluation instructions for "not found" responses
     const notFoundInstructions = hasNotFoundClaim ? `
 SPECIAL INSTRUCTIONS FOR "NOT FOUND" RESPONSES:
@@ -228,26 +231,52 @@ The response claims information is not available in the context. Be extra skepti
 - If the query asks about Chapter 2, ensure there's no mention of "Chapter 2" or "performatives and speech acts" before accepting a "not found" claim
 ` : '';
 
-    return `
-RESPONSE QUALITY EVALUATION SYSTEM
-----------------------------------
+    // Special instructions for responses with research notes
+    const researchNotesInstructions = hasResearchNotes ? `
+SPECIAL INSTRUCTIONS FOR RESPONSES WITH RESEARCH NOTES:
+The response includes a RESEARCH NOTES section requesting additional information.
+- Evaluate whether these research requests are reasonable and necessary
+- If the additional queries would genuinely improve the response, note this in your reasoning
+- Include these requested queries in your refinedQuery field as a JSON array format
+- If the content is already comprehensive despite the request for more info, note this in your reasoning
+` : '';
 
-You are an unbiased evaluation system that assesses response quality. Your task is to analyze a response to determine if it adequately answers the original query based on the retrieved context.
+    return `
+CONTENT QUALITY EVALUATION SYSTEM
+---------------------------------
+
+You are an expert content evaluator for a professional blog platform. Your task is to assess whether blog-style content meets high standards of quality, engagement, and factual accuracy based on the available context.
 
 EVALUATION CRITERIA:
-1. RELEVANCE: Does the response directly address the query's core information need?
-2. COMPREHENSIVENESS: Does the response cover all aspects of the query that can be answered from the context?
-3. ACCURACY: Is the information provided factually correct based on the context?
-4. CLARITY: Is the response well-structured, clear, and easy to understand?
-5. CONTEXTUAL GROUNDING: Is the response firmly based on the provided context?
-${notFoundInstructions}
-OBJECTIVE EVALUATION INSTRUCTIONS:
-- Evaluate ONLY based on how well the response answers the query using the context
-- Do NOT consider formatting, style preferences, or tone
-- Do NOT impose your own knowledge that isn't in the context
-- Assess whether the response contains all essential information from the context that is relevant to the query
-- If the context lacks information to answer the query, determine if the response acknowledges this limitation appropriately
 
+1. CONTENT QUALITY & DEPTH (35%)
+   - Is the content substantive, thorough, and insightful?
+   - Does it go beyond surface-level information to provide valuable analysis?
+   - Does it anticipate and address potential questions or confusion?
+   - Is the content comprehensive enough to serve as a standalone resource?
+
+2. FACTUAL ACCURACY (25%)
+   - Is the information provided factually correct based on the context?
+   - Does it avoid unsupported claims or speculation beyond the context?
+   - Are any knowledge limitations or gaps appropriately acknowledged?
+
+3. ENGAGEMENT & STYLE (15%)
+   - Is the content written in an engaging, authoritative voice?
+   - Does it use vivid language, relevant examples, or helpful analogies?
+   - Does it have a compelling introduction and satisfying conclusion?
+   - Does it maintain reader interest throughout?
+
+4. STRUCTURE & ORGANIZATION (15%)
+   - Is the content well-structured with clear headings and logical flow?
+   - Does it use formatting elements (lists, callouts, etc.) effectively?
+   - Are there clear section breaks and a coherent narrative thread?
+
+5. ENHANCED FEATURES (10%)
+   - Does it include additional value-adding sections like "Why This Matters"?
+   - Are there thoughtful follow-up questions that extend the conversation?
+   - Does it provide appropriate recommendations for related content?
+   - Does it identify knowledge gaps with specific research suggestions when needed?
+${notFoundInstructions}${researchNotesInstructions}
 ORIGINAL QUERY:
 ${query}
 
@@ -263,7 +292,7 @@ Analyze the response against the evaluation criteria and provide your evaluation
 **SCORE**: [numerical score from 0.0 to 1.0 representing overall quality, higher is better]
 **APPROVED**: [true if response meets minimum quality standards, false otherwise]
 **REASONING**: [Brief explanation of your evaluation and why you approved or rejected]
-**REFINED QUERY**: [If not approved, provide a refined version of the original query that might yield better results. If approved, write "None needed"]
+**REFINED QUERY**: [If not approved, provide a refined version of the original query that might yield better results. If approved but research notes are present, include the suggested research queries as a JSON array. If approved with no research needs, write "None needed"]
 `;
   }
   
@@ -283,6 +312,26 @@ Analyze the response against the evaluation criteria and provide your evaluation
    */
   getNextAction(evaluation) {
     if (evaluation.approved) {
+      // Check if there are research requests in the refinedQuery
+      if (evaluation.refinedQuery && evaluation.refinedQuery !== "None needed") {
+        try {
+          // Try to parse as JSON array of queries
+          const additionalQueries = JSON.parse(evaluation.refinedQuery);
+          if (Array.isArray(additionalQueries) && additionalQueries.length > 0) {
+            return {
+              action: 'research',
+              data: {
+                ...evaluation,
+                additionalQueries
+              }
+            };
+          }
+        } catch (err) {
+          // If we can't parse as JSON, just proceed with present action
+          this.log(`Error parsing additionalQueries: ${err.message}`);
+        }
+      }
+      
       return {
         action: 'present',
         data: evaluation

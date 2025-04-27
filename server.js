@@ -807,6 +807,51 @@ app.post('/api/rag/complete', async (req, res) => {
     
     // Get the next action recommendation
     const nextAction = criticAgent.getNextAction(latestEvaluation);
+      
+      // Check if there are additional research requests
+      let additionalResearch = [];
+      if (latestEvaluation.approved && latestEvaluation.refinedQuery && latestEvaluation.refinedQuery !== "None needed") {
+        try {
+          // Try to parse as JSON array of additional queries
+          additionalResearch = JSON.parse(latestEvaluation.refinedQuery);
+          log(`CriticAgent suggested ${additionalResearch.length} additional research queries`);
+          
+          // Perform additional retrievals if requested
+          if (Array.isArray(additionalResearch) && additionalResearch.length > 0) {
+            // Only process up to 3 additional queries to avoid overloading
+            const researchToPerform = additionalResearch.slice(0, 3);
+            
+            let additionalContexts = [];
+            for (const researchQuery of researchToPerform) {
+              log(`Performing additional research for query: "${researchQuery}"`);
+              // Get additional context
+              const addlContext = await retrieverAgent.retrieve(researchQuery);
+              if (addlContext && addlContext.trim() !== '') {
+                additionalContexts.push({
+                  query: researchQuery,
+                  context: addlContext
+                });
+              }
+            }
+            
+            // If we found additional contexts, append them to the response
+            if (additionalContexts.length > 0) {
+              let researchSummary = "\n\n---\n\n**ADDITIONAL RESEARCH FINDINGS**\n\n";
+              additionalContexts.forEach(item => {
+                researchSummary += `For query "${item.query}":\n\n${item.context.substring(0, 500)}...\n\n`;
+              });
+              
+              // Append to the response
+              currentResponse += researchSummary;
+              
+              log(`Added ${additionalContexts.length} additional research sections to the response`);
+            }
+          }
+        } catch (err) {
+          log(`Error processing research suggestions: ${err.message}`);
+          // Continue with the current response if there's an error
+        }
+      }
     
     // Final response after loop completion
     return res.json({

@@ -1,0 +1,37 @@
+{
+  "id": "37424894",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "ons (heads then heads, heads then\ntails, tails then heads, tails then tails). Only one of these four permutations\n(heads then tails) is a favorable outcome.\nWe need to calculate probabilities of combinations in a different way. For\nexample, if you flip a fair coin twice, what is the probability of its landing\nheads and tails in anyorder? There are two ways for this to happen. The coin\ncould come up either heads then tails or tails then heads. These alternatives",
+  "index": 1982,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:16:46.747Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1982,
+    "chunkId": "37424894",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}
