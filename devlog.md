@@ -31,7 +31,21 @@
 - Prioritized first pages for general book questions
 - Added document metadata as additional context
 
-### Next Steps
+### 2025-04-27 - Fixed Preprocessing Error
+
+### Completed
+- Fixed "Preprocessing error: Load failed" issue in the UI connection
+- Added enhanced error handling in API client
+- Modified backend to support both `documents` and `documentIds` parameters for backwards compatibility
+- Added detailed error logging throughout the preprocessing flow
+- Successfully tested document preprocessing
+
+### Key Improvements
+- Fixed mismatch between frontend API calls and backend expectations
+- Enhanced error reporting for better debugging
+- Improved error handling in API client
+
+## Next Steps
 - Implement proper vector embeddings for semantic search
 - Add support for more document types (TXT, DOCX, etc.)
 - Enhance UI with more Vault-Tec themed elements

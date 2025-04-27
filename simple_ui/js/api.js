@@ -115,6 +115,8 @@ class RAGAPI {
      */
     async preprocessDocuments(documents = [], options = {}) {
         try {
+            console.log('Preprocessing documents:', documents);
+            
             const response = await fetch(`${this.baseUrl}/documents/preprocess`, {
                 method: 'POST',
                 headers: {
@@ -127,10 +129,14 @@ class RAGAPI {
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
+                const errorText = await response.text();
+                console.error('Server response error:', response.status, errorText);
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
             
-            return await response.json();
+            const result = await response.json();
+            console.log('Preprocessing result:', result);
+            return result;
         } catch (error) {
             console.error('Error preprocessing documents:', error);
             throw error;

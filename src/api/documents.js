@@ -105,7 +105,12 @@ async function listDocuments(req, res) {
  */
 async function preprocessDocuments(req, res) {
     try {
-        const { documents, options = {} } = req.body;
+        // Log the incoming request body for debugging
+        console.log('Preprocessing request body:', req.body);
+        
+        // Support both 'documents' and 'documentIds' keys for backward compatibility
+        const documents = req.body.documents || req.body.documentIds || [];
+        const options = req.body.options || {};
         
         if (!documents || !Array.isArray(documents) || documents.length === 0) {
             return res.status(400).json({

@@ -222,6 +222,9 @@ async function handlePreprocessDocuments() {
         // Show preprocessing message
         addSystemMessage('Preprocessing documents... This may take a moment.');
         
+        // Logging before API call for debugging
+        console.log('Sending documents for preprocessing:', state.selectedDocuments);
+        
         // Call API to preprocess documents
         const result = await api.preprocessDocuments(state.selectedDocuments, {
             chunkSize: 500,
@@ -229,6 +232,9 @@ async function handlePreprocessDocuments() {
             chunkingStrategy: 'hybrid',
             extractMetadata: true
         });
+        
+        // Log response for debugging
+        console.log('Preprocessing response:', result);
         
         if (result.success) {
             // Update UI to show processed documents
