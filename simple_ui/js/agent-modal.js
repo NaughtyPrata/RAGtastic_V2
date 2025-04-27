@@ -65,11 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
             { id: 2, label: 'Retriever Agent', type: 'retriever', x: 20, y: 30, active: false },
             { id: 3, label: 'Synthesizer Agent', type: 'synthesizer', x: 50, y: 20, active: false },
             { id: 4, label: 'Critic Agent', type: 'critic', x: 80, y: 30, active: false },
-            { id: 5, label: 'Code Agent', type: 'coder', x: 20, y: 70, active: false },
-            { id: 6, label: 'Persona Adapter', type: 'adapter', x: 50, y: 80, active: false },
-            { id: 7, label: 'Presentation Agent', type: 'presenter', x: 80, y: 70, active: false },
-            { id: 8, label: 'User Query', type: 'user', x: 5, y: 50, active: true },
-            { id: 9, label: 'Final Response', type: 'response', x: 95, y: 50, active: false }
+            { id: 5, label: 'Presentation Agent', type: 'presenter', x: 80, y: 70, active: false },
+            { id: 6, label: 'User Query', type: 'user', x: 5, y: 50, active: true },
+            { id: 7, label: 'Final Response', type: 'response', x: 95, y: 50, active: false }
         ];
         
         // Define connections (using the global connections variable)
@@ -77,16 +75,13 @@ document.addEventListener('DOMContentLoaded', function() {
             { from: 1, to: 2 }, // Orchestrator to Retriever
             { from: 1, to: 3 }, // Orchestrator to Synthesizer
             { from: 1, to: 4 }, // Orchestrator to Critic
-            { from: 1, to: 5 }, // Orchestrator to Code
-            { from: 1, to: 6 }, // Orchestrator to Persona
-            { from: 1, to: 7 }, // Orchestrator to Presentation
+            { from: 1, to: 5 }, // Orchestrator to Presentation
             { from: 2, to: 3 }, // Retriever to Synthesizer
             { from: 3, to: 4 }, // Synthesizer to Critic
-            { from: 4, to: 6 }, // Critic to Persona (if approved)
+            { from: 4, to: 5 }, // Critic to Presentation (if approved)
             { from: 4, to: 2 }, // Critic back to Retriever (if rejected for refinement)
-            { from: 6, to: 7 }, // Persona to Presentation
-            { from: 8, to: 1 }, // User to Orchestrator
-            { from: 7, to: 9 }  // Presentation to Final Response
+            { from: 6, to: 1 }, // User to Orchestrator
+            { from: 5, to: 7 }  // Presentation to Final Response
         ];
         
         // Create SVG connections
@@ -289,9 +284,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { from: 3, to: 4 }, // Synthesizer to Critic (second review)
             
             // Now the response is approved
-            { from: 4, to: 6 }, // Critic to Adapter (approval)
-            { from: 6, to: 7 }, // Adapter to Presenter
-            { from: 7, to: 9 }  // Presenter to Response
+            { from: 4, to: 5 }, // Critic to Presenter (approval)
+            { from: 5, to: 7 }  // Presenter to Response
         ];
         
         // Keep track of refinement iteration
@@ -421,8 +415,7 @@ document.addEventListener('DOMContentLoaded', function() {
             retriever: 'Specialized in retrieving relevant documents, context, and entities from knowledge sources. Provides the factual foundation needed for accurate responses.',
             synthesizer: 'Processes retrieved information and combines it with user instructions to generate coherent content and answers.',
             critic: 'Reviews and validates content for accuracy, quality, and adherence to guidelines. Determines if the response meets quality thresholds and either approves it or refines the query to improve results. Will try up to 3 refinement iterations before accepting the best available response.',
-            coder: 'Generates, reviews, and debugs code when programming tasks are requested.',
-            adapter: 'Adapts generated content to match specified persona characteristics, tone, and style requirements.',
+
             presenter: 'Formats and prepares the final content for optimal presentation to the user.',
             user: 'Entry point for user queries that initiates the agent workflow.',
             response: 'Final output point where processed, validated, and formatted content is delivered back to the user.'
