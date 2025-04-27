@@ -71,35 +71,78 @@ class CriticAgent {
       ];
       
       // Call Groq LLM
-      const completion = await groqClient.chat.completions.create({
+      // Check if model supports response_format
+      const supportsResponseFormat = [
+        "claude-3-opus-20240229",
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307",
+        "gpt-4-turbo",
+        "gpt-4-0125-preview",
+        "gpt-4-1106-preview",
+        "gpt-4",
+        "gpt-3.5-turbo-0125",
+        "gpt-3.5-turbo-1106"
+      ].includes(this.options.model);
+      
+      // Create completion options
+      const completionOptions = {
         model: this.options.model,
         messages: messages,
         temperature: this.options.temperature,
         max_tokens: this.options.maxTokens,
         top_p: this.options.topP,
-        stream: false,
-        response_format: { type: "json" } // Request JSON response
-      });
+        stream: false
+      };
+      
+      // Add response_format only for supported models
+      if (supportsResponseFormat) {
+        completionOptions.response_format = { type: "json" };
+      }
+      
+      // Call Groq LLM
+      const completion = await groqClient.chat.completions.create(completionOptions);
       
       // Extract evaluation result
       const evaluationResultText = completion.choices[0].message.content;
       
-      // Parse JSON response
+      // Parse response which may be either JSON or text
       let evaluationResult;
       
       try {
+        // First try to parse as JSON
         evaluationResult = JSON.parse(evaluationResultText);
       } catch (parseError) {
-        this.log(`Error parsing evaluation result: ${parseError.message}`);
+        this.log(`Response is not in JSON format, attempting to extract values from text`);
         this.log(`Raw evaluation result: ${evaluationResultText}`);
         
-        // Fallback to default values
+        // Extract data from text using regex patterns
+        const scoreMatch = evaluationResultText.match(/\*\*SCORE\*\*:\s*([0-9.]+)/i) || 
+                        evaluationResultText.match(/\*\*OVERALL SCORE\*\*:\s*([0-9.]+)/i) ||
+                        evaluationResultText.match(/score:\s*([0-9.]+)/i);
+        
+        const approvedMatch = evaluationResultText.match(/\*\*APPROVED\*\*:\s*(true|false)/i) ||
+                          evaluationResultText.match(/approved:\s*(true|false)/i);
+        
+        const reasoningMatch = evaluationResultText.match(/\*\*REASONING\*\*:\s*([^\n]+)/i) ||
+                           evaluationResultText.match(/reasoning:\s*([^\n]+)/i);
+        
+        const refinedQueryMatch = evaluationResultText.match(/\*\*REFINED QUERY\*\*:\s*([^\n]+)/i) ||
+                               evaluationResultText.match(/refined query:\s*([^\n]+)/i);
+        
+        // Create result object from extracted data
         evaluationResult = {
-          score: 0.5,
-          approved: false,
-          reasoning: "Failed to parse evaluation result.",
-          refinedQuery: query
+          score: scoreMatch ? parseFloat(scoreMatch[1]) : 0.7,
+          approved: approvedMatch ? approvedMatch[1].toLowerCase() === 'true' : false,
+          reasoning: reasoningMatch ? reasoningMatch[1].trim() : "Extracted from text evaluation",
+          refinedQuery: refinedQueryMatch && !refinedQueryMatch[1].toLowerCase().includes('none') ? 
+                      refinedQueryMatch[1].trim() : query
         };
+        
+        // Handle case where the query is explicitly approved in text
+        if (evaluationResultText.toLowerCase().includes('approved') && 
+            !evaluationResultText.toLowerCase().includes('not approved')) {
+          evaluationResult.approved = true;
+        }
       }
       
       // Ensure all required fields exist
@@ -183,14 +226,12 @@ SYNTHESIZED RESPONSE TO EVALUATE:
 ${response}
 
 YOUR TASK:
-Analyze the response against the evaluation criteria and return a JSON object with the following properties:
+Analyze the response against the evaluation criteria and provide your evaluation in the following format:
 
-1. "score": A numerical score from 0.0 to 1.0 representing overall quality (higher is better)
-2. "approved": Boolean indicating if the response meets minimum quality standards (true/false)
-3. "reasoning": Brief explanation of your evaluation and why you approved or rejected
-4. "refinedQuery": If not approved, provide a refined version of the original query that might yield better results
-
-Your output must be valid JSON with these four properties only. Do not include any other text or explanation outside of the JSON structure.
+**SCORE**: [numerical score from 0.0 to 1.0 representing overall quality, higher is better]
+**APPROVED**: [true if response meets minimum quality standards, false otherwise]
+**REASONING**: [Brief explanation of your evaluation and why you approved or rejected]
+**REFINED QUERY**: [If not approved, provide a refined version of the original query that might yield better results. If approved, write "None needed"]
 `;
   }
   

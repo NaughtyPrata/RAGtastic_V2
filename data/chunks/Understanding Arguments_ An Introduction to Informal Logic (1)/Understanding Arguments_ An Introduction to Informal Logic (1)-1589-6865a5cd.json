@@ -1,0 +1,37 @@
+{
+  "id": "6865a5cd",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "date fails the NCT, is a deductive argu-\nment that cannot be overturned by any further cases. In contrast, an argument\nfor a positive conclusion that a candidate is a necessary condition, because that\ncandidate passes the NCT, is an inductive argument that can be overturned\nby a further case where this candidate fails the NCT. For example, suppose\nwe find:\nCase 4: ~A~B~C~D  G\nThe information in this new Case 4 is enough to show that Ccannot be a neces-\nsary condition of the target feature G, reg",
+  "index": 1589,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:02:01.111Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1589,
+    "chunkId": "6865a5cd",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}

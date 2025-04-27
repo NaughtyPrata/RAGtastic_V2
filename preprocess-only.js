@@ -1,5 +1,5 @@
 /**
- * Simple test to preprocess just the Prompt-Engineering.pdf document
+ * Test to preprocess both PDF documents
  */
 
 const axios = require('axios');
@@ -8,13 +8,13 @@ const axios = require('axios');
 const API_BASE_URL = 'http://localhost:3002/api';
 
 async function preprocessPDF() {
-  console.log('Attempting to preprocess Prompt-Engineering.pdf...\n');
+  console.log('Attempting to preprocess both PDF documents...\n');
   
   try {
     const response = await axios.post(`${API_BASE_URL}/documents/preprocess`, {
-      documents: ['Prompt-Engineering.pdf']
+      documents: ['Prompt-Engineering.pdf', 'Understanding Arguments_ An Introduction to Informal Logic (1).pdf']
     }, {
-      timeout: 120000 // 120 second timeout
+      timeout: 240000 // 240 second timeout
     });
     
     console.log('Preprocessing response:', JSON.stringify(response.data, null, 2));

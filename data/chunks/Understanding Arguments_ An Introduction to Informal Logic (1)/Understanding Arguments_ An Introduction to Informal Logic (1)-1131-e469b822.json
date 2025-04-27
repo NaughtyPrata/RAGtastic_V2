@@ -1,0 +1,37 @@
+{
+  "id": "e469b822",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "pq).” Perhaps we should have sym-\nbolized it as “~p& ~q.” In fact, we could have used this symbolization, because\nthe two expressions amount to the same thing. Again, this may be obvious, but\nwe can prove it by using a truth table in yet another way. Compare the truth\ntable analysis of these two expressions:\npq ̃p ̃q ̃p&  ̃q(p q) ̃(p q)\nTT F  F  FT    F\nTF F  T  F    T    F\nFT T  F  F    T   F\nFF T T  T    F   T\nUnder “~p& ~q” we find the column (FFFT), and we find the same sequence\nunder “~(pq)",
+  "index": 1131,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:02:01.111Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1131,
+    "chunkId": "e469b822",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}

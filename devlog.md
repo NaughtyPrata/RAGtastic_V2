@@ -12,6 +12,31 @@
 - [x] Enhanced response display to show query refinement history
 - [x] Added quality score based on CriticAgent evaluation
 
+## 2025-04-27: System Reset and PDF Processing Improvements
+
+### Completed Tasks
+
+- [x] Implemented proper system reset functionality with index flushing
+- [x] Enhanced UI to show reset progress and success messaging
+- [x] Added API endpoint for system reset (/api/system/reset)
+- [x] Modified preprocessing to handle multiple PDFs simultaneously
+- [x] Successfully processed both PDF documents:
+  - Prompt-Engineering.pdf (667 chunks)
+  - Understanding Arguments_ An Introduction to Informal Logic (1).pdf (10572 chunks)
+- [x] Fixed document caching issues causing stale results
+
+### Changes Made
+
+1. Added `/api/system/reset` endpoint to server.js for flushing document chunks
+2. Enhanced `api.reset()` function to properly clear cached document data
+3. Updated `resetInterface()` in app.js to use the new API endpoint
+4. Modified preprocess-only.js to handle both PDFs simultaneously
+5. Increased timeout for PDF processing to 240 seconds
+6. Added progress feedback for system reset operation
+7. Added document refresh after reset to ensure UI consistency
+
+## 2025-04-27: CriticAgent UI Integration
+
 ### Changes Made
 
 1. Updated `agent-modal.js` to visualize the RetrieverAgent → SynthesizerAgent → CriticAgent flow

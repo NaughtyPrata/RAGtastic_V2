@@ -1,0 +1,37 @@
+{
+  "id": "826a1bcd",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": " seem justified in believing each premise\nin the following argument:\nTicket #1 will lose.\nTicket #2 will lose.\nTicket #3 will lose.\n[and so on, until:]\nTicket #1,000,000 will lose.\nThere are only 1,000,000 tickets.\nEvery ticket will lose.\nThis conclusion must be false, since the lottery is fair. However, the conclusion\nfollows from the premises, and each of the premises seems justified. Does this\nargument justify us in believing its conclusion? Why or why not?\nDiscussion Question\nBAYES’S THEOREM",
+  "index": 2002,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:02:04.273Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 2002,
+    "chunkId": "826a1bcd",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}

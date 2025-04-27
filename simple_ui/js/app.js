@@ -24,54 +24,72 @@ const state = {
 };
 
 // Reset interface
-function resetInterface() {
-    // Clear conversation
-    conversation.innerHTML = '';
+async function resetInterface() {
+    // Show loading message
+    addSystemMessage('Resetting system, please wait...');
     
-    // Add welcome message back
-    const welcomeMessage = document.createElement('div');
-    welcomeMessage.className = 'message-container';
-    welcomeMessage.innerHTML = `
-        <div class="message-header">
-            <div class="message-avatar system-avatar">SYS</div>
-            <div class="message-sender">VAULT-TEC AI</div>
-        </div>
-        <div class="message-content system-message">
-            <div class="boot-sequence">
-                <div class="boot-line">VAULT-TEC INDUSTRIES (TM) TERMINAL</div>
-                <div class="boot-line">ROBCO INTERFACE ADAPTER 2.1</div>
-                <div class="boot-line">CHECKING SYSTEM... OK</div>
-                <div class="boot-line">INITIALIZING RETRIEVAL AUGMENTED GENERATION...</div>
-                <div class="boot-line">LOADING KNOWLEDGE BASE... COMPLETE</div>
-                <div class="boot-line">ESTABLISHING SECURE CONNECTION...</div>
-                <div class="boot-line">CONNECTION ESTABLISHED</div>
-                <div class="boot-line boot-welcome">WELCOME TO RAGTASTIC (TM) BY VAULT-TEC</div>
+    try {
+        // Call API to reset system
+        const resetResult = await api.reset();
+        console.log('Reset result:', resetResult);
+        
+        // Clear conversation
+        conversation.innerHTML = '';
+        
+        // Add welcome message back
+        const welcomeMessage = document.createElement('div');
+        welcomeMessage.className = 'message-container';
+        welcomeMessage.innerHTML = `
+            <div class="message-header">
+                <div class="message-avatar system-avatar">SYS</div>
+                <div class="message-sender">VAULT-TEC AI</div>
             </div>
-            <p>VAULT-TEC CHATAGENT: Under maintenance...</p>
-        </div>
-    `;
-    conversation.appendChild(welcomeMessage);
-    
-    // Clear query input
-    queryInput.value = '';
-    
-    // Reset state
-    state.preprocessedDocuments = [];
-    
-    // Update document selection UI to remove processed class
-    document.querySelectorAll('.file-item.processed').forEach(item => {
-        item.classList.remove('processed');
-    });
-    
-    // Update system stats
-    updateSystemStats({
-        latency: '0ms',
-        tokens: '0',
-        score: '100%'
-    });
-    
-    // Animate new elements
-    animateElements();
+            <div class="message-content system-message">
+                <div class="boot-sequence">
+                    <div class="boot-line">VAULT-TEC INDUSTRIES (TM) TERMINAL</div>
+                    <div class="boot-line">ROBCO INTERFACE ADAPTER 2.1</div>
+                    <div class="boot-line">CHECKING SYSTEM... OK</div>
+                    <div class="boot-line">INITIALIZING RETRIEVAL AUGMENTED GENERATION...</div>
+                    <div class="boot-line">LOADING KNOWLEDGE BASE... COMPLETE</div>
+                    <div class="boot-line">ESTABLISHING SECURE CONNECTION...</div>
+                    <div class="boot-line">CONNECTION ESTABLISHED</div>
+                    <div class="boot-line boot-welcome">WELCOME TO RAGTASTIC (TM) BY VAULT-TEC</div>
+                </div>
+                <p>VAULT-TEC CHATAGENT: Ready for your queries. System has been reset.</p>
+            </div>
+        `;
+        conversation.appendChild(welcomeMessage);
+        
+        // Clear query input
+        queryInput.value = '';
+        
+        // Reset state
+        state.preprocessedDocuments = [];
+        
+        // Update document selection UI to remove processed class
+        document.querySelectorAll('.file-item.processed').forEach(item => {
+            item.classList.remove('processed');
+        });
+        
+        // Update system stats
+        updateSystemStats({
+            latency: '0ms',
+            tokens: '0',
+            score: '100%'
+        });
+        
+        // Refresh documents list to reflect changes
+        await loadDocuments();
+        
+        // Animate new elements
+        animateElements();
+        
+        // Add success message
+        addSystemMessage('System reset complete. All document caches have been cleared.');
+    } catch (error) {
+        console.error('Error resetting system:', error);
+        showError(`Reset failed: ${error.message}`);
+    }
 }
 
 // Initialize the app

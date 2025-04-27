@@ -46,6 +46,72 @@ const { listDocuments, preprocessDocuments } = require('./src/api/documents');
 app.get('/api/documents', listDocuments);
 app.post('/api/documents/preprocess', preprocessDocuments);
 
+// System management endpoints
+app.post('/api/system/reset', async (req, res) => {
+  try {
+    const { flushIndexes = true, clearDocuments = false } = req.body;
+    log(`System reset requested: flushIndexes=${flushIndexes}, clearDocuments=${clearDocuments}`);
+    
+    let deletedChunks = 0;
+    let deletedFiles = 0;
+    
+    // Flush vector index by removing chunks directory contents
+    if (flushIndexes) {
+      const chunksDir = path.join(__dirname, 'data', 'chunks');
+      
+      // Check if directory exists
+      if (fs.existsSync(chunksDir)) {
+        const docDirs = await fs.promises.readdir(chunksDir).catch(() => []);
+        
+        // Process each document directory
+        for (const dir of docDirs) {
+          if (dir.startsWith('.')) continue;
+          
+          const dirPath = path.join(chunksDir, dir);
+          if (fs.statSync(dirPath).isDirectory()) {
+            const files = await fs.promises.readdir(dirPath).catch(() => []);
+            
+            // Delete all chunk files in this directory
+            for (const file of files) {
+              if (file.endsWith('.json')) {
+                await fs.promises.unlink(path.join(dirPath, file)).catch(e => {
+                  log(`Error deleting chunk file ${file}: ${e.message}`);
+                });
+                deletedChunks++;
+              }
+            }
+            
+            // Optionally remove the directory itself
+            if (clearDocuments) {
+              await fs.promises.rmdir(dirPath).catch(e => {
+                log(`Error removing directory ${dir}: ${e.message}`);
+              });
+              deletedFiles++;
+            }
+          }
+        }
+      }
+    }
+    
+    return res.json({
+      success: true,
+      message: 'System reset completed successfully',
+      stats: {
+        deletedChunks,
+        deletedFiles
+      }
+    });
+  } catch (error) {
+    log(`Error resetting system: ${error.message}`);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'System reset error',
+      message: error.message
+    });
+  }
+});
+
 // Synthesizer endpoint
 app.post('/api/synthesizer/query', async (req, res) => {
   try {

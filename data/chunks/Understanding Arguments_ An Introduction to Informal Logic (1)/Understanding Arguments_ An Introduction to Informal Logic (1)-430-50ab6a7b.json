@@ -1,0 +1,37 @@
+{
+  "id": "50ab6a7b",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "t in this context validity is a technical notion. Here “valid” does not mean\n“good,” and “invalid” does not mean “bad.” This will be our definition of\nvalidity:\nAn argument is validif and only if it is not possible that all of its premises\nare true and its conclusion false.\nAlternatively, one could say that its conclusion mustbe true if its premises\nare all true (or, again, that at least one of its premises mustbe false if its con-\nclusion is false). The point is that a certain combination—true ",
+  "index": 430,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:02:04.273Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 430,
+    "chunkId": "50ab6a7b",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}

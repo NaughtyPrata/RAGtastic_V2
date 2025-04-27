@@ -164,7 +164,31 @@ class RAGAPI {
      * @returns {Promise<Object>} Reset response
      */
     async reset() {
-        return { status: "reset" };
+        try {
+            // Flush the index and clear document records
+            const response = await fetch(`${this.baseUrl}/system/reset`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    flushIndexes: true,
+                    clearDocuments: true
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('System reset result:', result);
+            return result;
+        } catch (error) {
+            console.error('Error resetting system:', error);
+            // Fallback for backward compatibility
+            return { status: "reset" };
+        }
     }
 }
 

@@ -1,0 +1,37 @@
+{
+  "id": "dc8f5281",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "a\nsentence of the form “ponly if q” will conversationally imply a commitment\nto “pif and only if q.”\n\n\n\n174\nCHAPTER 6 ■Propositional Logic\nWe can next look at sentences of the form “pif and only if q“—so-called\nbiconditionals. If I say that I will clean the barn if and only if Hazel will help\nme, then I am saying that I will clean it if she helps and I will not clean it if\nshe does not. Translated, this becomes:\n(H)B) & (~H)~B)\nThis is equivalent to:\n(H)B) & (B)H)\nWe thus have an implication goi",
+  "index": 1207,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:02:06.938Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1207,
+    "chunkId": "dc8f5281",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}

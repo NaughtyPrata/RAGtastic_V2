@@ -1,0 +1,37 @@
+{
+  "id": "a3edefab",
+  "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+  "content": "ndidate features are present. The suf-\nficient condition test (SCT) can be stated as follows:\nSCT:Any candidate that is present when Gis absent is eliminated as a\npossible sufficient condition of G.\nThe test applies to Table 1 as follows: Case 1 need not be examined because G\nis present, so there can be no violation of SCT in Case 1. Case 2 eliminates two\nof the candidates, Band C,for both are present in a situation in which Gis ab-\nsent. Finally, Case 3 eliminates Afor the same reason. We are t",
+  "index": 1579,
+  "metadata": {
+    "title": "Understanding",
+    "pageCount": 577,
+    "pdfInfo": {
+      "PDFFormatVersion": "1.5",
+      "IsAcroFormPresent": false,
+      "IsXFAPresent": false,
+      "Title": "Cengage Advantage Books: Understanding Arguments: An Introduction to Informal Logic",
+      "Author": "Walter Sinnott-Armstrong",
+      "Creator": "Adobe InDesign CS2 (4.0.5)",
+      "Producer": "Acrobat Distiller 6.0 (Windows)",
+      "CreationDate": "D:20020101054654+05'30'",
+      "ModDate": "D:20100730084856+05'30'"
+    },
+    "pdfMetadata": {
+      "_metadata": {
+        "pdfx:universalↂ0020pdf": "The process that creates this PDF constitutes a trade secret of codeMantra, LLC and is protected by the copyright laws of the United States",
+        "dc:title": "9781439064139.pdf",
+        "dc:creator": ""
+      }
+    },
+    "pdfVersion": "unknown",
+    "extractedAt": "2025-04-27T16:02:01.111Z",
+    "author": "the copyright herein may be reproduced",
+    "date": "the 1976",
+    "documentId": "Understanding Arguments_ An Introduction to Informal Logic (1)",
+    "chunkIndex": 1579,
+    "chunkId": "a3edefab",
+    "isFirstChunk": false,
+    "isLastChunk": false
+  }
+}
