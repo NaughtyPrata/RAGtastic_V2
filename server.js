@@ -10,6 +10,10 @@ const dotenv = require('dotenv');
 const { Groq } = require('groq-sdk');
 const fs = require('fs');
 
+// Import Agents
+const RetrieverAgent = require('./src/agents/retrieverAgent');
+const SynthesizerAgent = require('./src/agents/synthesizerAgent');
+
 // Load environment variables
 dotenv.config();
 
@@ -41,6 +45,72 @@ const { listDocuments, preprocessDocuments } = require('./src/api/documents');
 // API routes
 app.get('/api/documents', listDocuments);
 app.post('/api/documents/preprocess', preprocessDocuments);
+
+// Synthesizer endpoint
+app.post('/api/synthesizer/query', async (req, res) => {
+  try {
+    const { query, options = {} } = req.body;
+    
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid query',
+        message: 'Query must be a non-empty string'
+      });
+    }
+    
+    log(`Processing RAG query with Synthesizer: ${query}`);
+    
+    // Initialize agents
+    const retrieverAgent = new RetrieverAgent({
+      numResults: options.numResults || 10,
+      similarityThreshold: options.similarityThreshold || 0.3,
+      useHybridSearch: options.useHybridSearch !== false,
+      verbose: true
+    });
+    
+    const synthesizerAgent = new SynthesizerAgent({
+      model: options.model || "llama3-8b-8192",
+      temperature: options.temperature || 0.7,
+      maxTokens: options.maxTokens || 1024,
+      topP: options.topP || 1.0,
+      verbose: true
+    });
+    
+    // 1. Retrieve context
+    const context = await retrieverAgent.retrieve(query);
+    
+    if (!context || context.trim() === '') {
+      return res.json({
+        success: true,
+        query,
+        response: "I'm sorry, but I couldn't find any relevant information in the Vault-Tec database to answer your query. Please try a different question or preprocess additional documents.",
+        context: 'No context found',
+        sources: []
+      });
+    }
+    
+    // 2. Synthesize response
+    const synthesizedResult = await synthesizerAgent.synthesize(query, context);
+    
+    return res.json({
+      success: true,
+      query,
+      response: synthesizedResult.response,
+      context: `Context used (${context.length} chars)`,
+      sources: [],
+      usage: synthesizedResult.usage
+    });
+  } catch (error) {
+    log(`Error processing synthesized query: ${error.message}`);
+    
+    return res.status(500).json({
+      success: false,
+      error: 'Query processing error',
+      message: error.message
+    });
+  }
+});
 
 // RAG query endpoint using Groq
 app.post('/api/retriever/query', async (req, res) => {

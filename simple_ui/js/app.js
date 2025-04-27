@@ -47,8 +47,7 @@ function resetInterface() {
                 <div class="boot-line">CONNECTION ESTABLISHED</div>
                 <div class="boot-line boot-welcome">WELCOME TO RAGTASTIC (TM) BY VAULT-TEC</div>
             </div>
-            <p>Welcome to the VAULT-TEC Retrieval Augmented Knowledge System. I'm your virtual assistant, ready to provide information and guidance using our proprietary document retrieval technology.</p>
-            <p>How may I assist you today?</p>
+            <p>VAULT-TEC CHATAGENT: Under maintenance...</p>
         </div>
     `;
     conversation.appendChild(welcomeMessage);

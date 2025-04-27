@@ -57,7 +57,14 @@ class RAGAPI {
      */
     async query(question, options = {}) {
         try {
-            const response = await fetch(`${this.baseUrl}/retriever/query`, {
+            // Default to synthesized query for better narrative responses
+            const endpoint = options.useSynthesizer !== false 
+                ? `${this.baseUrl}/synthesizer/query` 
+                : `${this.baseUrl}/retriever/query`;
+                
+            console.log(`Using endpoint: ${endpoint}`);
+            
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
