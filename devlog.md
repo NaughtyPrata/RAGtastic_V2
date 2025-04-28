@@ -1,5 +1,21 @@
 # Development Log
 
+## 2025-04-28: Server Restart
+
+### Completed Tasks
+
+- [x] Successfully restarted the sRAG server for continued development
+- [x] Verified server is running on port 3002
+- [x] Confirmed server URL is accessible at http://localhost:3002
+
+### Next Steps
+
+- Continue implementing the planned agentic flow components
+- Enhance Vault-Tec themed UI elements
+- Implement remaining agents from the flow diagram
+
+# Previous Entries
+
 ## 2025-04-27: Enhanced SynthesizerAgent with Blog-Style Writing
 
 ### Completed Tasks
