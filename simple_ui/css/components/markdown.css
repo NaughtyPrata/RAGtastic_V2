@@ -1,0 +1,121 @@
+/* Markdown styling that maintains Vault-Tec theme */
+
+/* Preserve message content's font and colors */
+.message-content {
+    overflow-x: auto;
+}
+
+/* Headings */
+.message-content h1, 
+.message-content h2, 
+.message-content h3, 
+.message-content h4, 
+.message-content h5, 
+.message-content h6 {
+    color: var(--vault-green);
+    font-family: 'VT323', monospace;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    line-height: 1.2;
+}
+
+.message-content h1 { font-size: 1.8em; }
+.message-content h2 { font-size: 1.6em; }
+.message-content h3 { font-size: 1.4em; }
+.message-content h4 { font-size: 1.2em; }
+.message-content h5 { font-size: 1.1em; }
+.message-content h6 { font-size: 1em; }
+
+/* Lists */
+.message-content ul, 
+.message-content ol {
+    margin-left: 1.5em;
+    padding-left: 0.5em;
+    margin-bottom: 1em;
+}
+
+.message-content li {
+    margin-bottom: 0.25em;
+}
+
+/* Code blocks */
+.message-content pre {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--terminal-green-dark);
+    padding: 0.5em;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.message-content code {
+    font-family: 'Source Code Pro', monospace;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+.message-content pre code {
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+/* Blockquotes */
+.message-content blockquote {
+    border-left: 3px solid var(--terminal-green);
+    margin: 0.5em 0 0.5em 1em;
+    padding: 0.5em 1em;
+    background-color: rgba(0, 0, 0, 0.2);
+    font-style: italic;
+}
+
+/* Tables */
+.message-content table {
+    border-collapse: collapse;
+    margin: 1em 0;
+    width: 100%;
+}
+
+.message-content th, 
+.message-content td {
+    border: 1px solid var(--terminal-green-dark);
+    padding: 0.4em 0.6em;
+    text-align: left;
+}
+
+.message-content th {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--vault-green);
+}
+
+.message-content tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Links */
+.message-content a {
+    color: var(--vault-green-bright);
+    text-decoration: underline;
+}
+
+.message-content a:hover {
+    color: var(--vault-yellow);
+}
+
+/* Horizontal rule */
+.message-content hr {
+    border: none;
+    border-top: 1px solid var(--terminal-green-dark);
+    margin: 1em 0;
+}
+
+/* Images */
+.message-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--terminal-green-dark);
+    padding: 3px;
+    background-color: rgba(0, 0, 0, 0.2);
+}

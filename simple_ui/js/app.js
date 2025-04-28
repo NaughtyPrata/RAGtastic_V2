@@ -617,10 +617,28 @@ function truncateText(text, maxLength) {
 function formatContent(content) {
     if (!content) return '';
     
-    // Convert newlines to HTML line breaks
-    content = content.replace(/\n/g, '<br>');
-    
-    return content;
+    // Process markdown if available
+    if (window.marked) {
+        try {
+            // Configure marked options
+            marked.setOptions({
+                breaks: true,          // Enable line breaks
+                gfm: true,             // Enable GitHub Flavored Markdown
+                headerIds: false,      // Disable header IDs to avoid conflicts
+                mangle: false,         // Disable mangling to preserve text
+            });
+            
+            // Parse content as markdown
+            return marked.parse(content);
+        } catch (error) {
+            console.error('Markdown parsing error:', error);
+            // Fallback to basic formatting
+            return content.replace(/\n/g, '<br>');
+        }
+    } else {
+        // Fallback if marked.js isn't loaded
+        return content.replace(/\n/g, '<br>');
+    }
 }
 
 // Animate elements using GSAP

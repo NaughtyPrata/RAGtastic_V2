@@ -1,5 +1,22 @@
 # Development Log
 
+## 2025-04-28: Added Markdown Support
+
+### Completed Tasks
+
+- [x] Added markdown parsing capability to the chat interface
+- [x] Integrated marked.js library for markdown processing
+- [x] Created markdown.css with styling that maintains Vault-Tec theme
+- [x] Updated formatContent() function to process markdown
+- [x] Ensured fallback behavior if markdown processing fails
+
+### Implementation Details
+
+- Used marked.js (v4.3.0) as a lightweight markdown parser
+- Styled markdown elements to match the existing terminal aesthetic
+- Added special styling for code blocks, tables, and blockquotes
+- Maintained existing font families and color scheme for consistency
+
 ## 2025-04-28: Server Restart
 
 ### Completed Tasks
