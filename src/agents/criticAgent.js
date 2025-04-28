@@ -296,8 +296,6 @@ The response includes a RESEARCH NOTES section requesting additional information
 ` : '';
 
     return `
-`
-=======
 CONTENT QUALITY EVALUATION SYSTEM
 ---------------------------------
 
@@ -344,15 +342,7 @@ Our standards have been raised. Be extremely critical in your evaluation. We wan
 ${this.options.strictMode ? `
 STRICT MODE ENABLED: You are instructed to be especially demanding in your evaluation. Unless the content truly excels in every category, suggest refinements to improve it.
 ` : ''}
-=======
-`
-=======
 
-Our standards have been raised. Be extremely critical in your evaluation. We want to ensure only the highest quality content is approved.
-
-${this.options.strictMode ? `
-STRICT MODE ENABLED: You are instructed to be especially demanding in your evaluation. Unless the content truly excels in every category, suggest refinements to improve it.
-` : ''}
 ${notFoundInstructions}${researchNotesInstructions}
 ORIGINAL QUERY:
 ${query}
