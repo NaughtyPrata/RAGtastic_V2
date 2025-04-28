@@ -853,11 +853,22 @@ app.post('/api/rag/complete', async (req, res) => {
         }
       }
     
+    // Add confidence score to response if approved
+    let finalResponse = currentResponse;
+    if (latestEvaluation && latestEvaluation.approved && latestEvaluation.score) {
+      // Format score as percentage
+      const confidenceScore = Math.round(latestEvaluation.score * 100);
+      
+      // Add confidence banner at the beginning of the response with CSS classes
+      const confidenceBanner = `<div class="confidence-banner"><span class="confidence-score">CONFIDENCE: ${confidenceScore}%</span></div>\n\n`;
+      finalResponse = confidenceBanner + finalResponse;
+    }
+    
     // Final response after loop completion
     return res.json({
       success: true,
       query: query,
-      response: currentResponse,
+      response: finalResponse,
       context: `Context used (${latestContext?.length || 0} chars)`,
       sources: [],
       evaluation: {

@@ -1,5 +1,21 @@
 # Development Log
 
+## 2025-04-28: Added Confidence Score Display
+
+### Completed Tasks
+
+- [x] Added confidence score display to the beginning of approved responses
+- [x] Styled confidence banner to highlight the CriticAgent's evaluation
+- [x] Implemented custom CSS classes for confidence banner
+- [x] Modified server.js to include the confidence score with responses
+
+### Implementation Details
+
+- Shows confidence score as a percentage at the top of responses
+- Used custom CSS classes for consistent styling
+- Integrated with CriticAgent's evaluation score
+- Applied Vault-Tec green color scheme for visual consistency
+
 ## 2025-04-28: Added Markdown Support
 
 ### Completed Tasks
