@@ -27,12 +27,13 @@ class CriticAgent {
   constructor(options = {}) {
     this.options = {
       model: options.model || "llama3-8b-8192",
-      temperature: options.temperature || 0.4, // Lower temperature for more deterministic evaluation
+      temperature: options.temperature || 0.2, // Lower temperature for more consistent evaluations
       maxTokens: options.maxTokens || 512, // Shorter response needed for evaluation
       topP: options.topP || 1.0,
       verbose: options.verbose || false,
-      qualityThreshold: options.qualityThreshold || 0.7, // Quality threshold (0.0 to 1.0)
+      qualityThreshold: options.qualityThreshold || 0.85, // Higher quality threshold (0.0 to 1.0)
       maxAttempts: options.maxAttempts || 3, // Maximum refinement attempts
+      strictMode: options.strictMode !== undefined ? options.strictMode : true, // Enable strict mode by default
       ...options
     };
     
@@ -151,8 +152,26 @@ class CriticAgent {
       evaluationResult.reasoning = evaluationResult.reasoning || "No reasoning provided.";
       evaluationResult.refinedQuery = evaluationResult.refinedQuery || query;
       
-      // Override approval based on max attempts
-      if (attempts >= this.options.maxAttempts - 1) {
+      // Apply stricter evaluation in strict mode
+      if (this.options.strictMode) {
+        // Only auto-approve if we've reached the max attempts
+        if (attempts >= this.options.maxAttempts - 1) {
+          evaluationResult.approved = true;
+          evaluationResult.reasoning += " (Max attempts reached - forced approval).";
+        } 
+        // Otherwise, enforce the quality threshold strictly
+        else if (evaluationResult.score < this.options.qualityThreshold) {
+          evaluationResult.approved = false;
+          evaluationResult.reasoning += ` (Strict mode: Score ${evaluationResult.score} below threshold ${this.options.qualityThreshold})`;
+          
+          // If we don't have a refined query yet, create one
+          if (evaluationResult.refinedQuery === query) {
+            evaluationResult.refinedQuery = this.generateRefinedQuery(query, evaluationResult);
+          }
+        }
+      } 
+      // Less strict mode - use original behavior
+      else if (attempts >= this.options.maxAttempts - 1) {
         evaluationResult.approved = true;
         evaluationResult.reasoning += " (Max attempts reached - forced approval).";
       }
@@ -186,6 +205,41 @@ class CriticAgent {
         usage: null
       };
     }
+  }
+  
+  /**
+   * Generate a refined query when the evaluation doesn't provide one
+   * @param {string} originalQuery - Original user query
+   * @param {Object} evaluation - Evaluation result object
+   * @returns {string} - Refined query
+   */
+  generateRefinedQuery(originalQuery, evaluation) {
+    // Simple query refinement strategies
+    let refinedQuery = originalQuery;
+    
+    // Add specificity for general queries
+    if (originalQuery.length < 30) {
+      refinedQuery = `Detailed information about ${originalQuery}`;
+    }
+    
+    // For chapter or section queries, enhance with more specific terms
+    if (originalQuery.toLowerCase().includes('chapter') || 
+        originalQuery.toLowerCase().includes('section')) {
+      refinedQuery = `${originalQuery} including key concepts, examples, and main points`;
+    }
+    
+    // For "what is" questions, expand to ask for more depth
+    if (originalQuery.toLowerCase().startsWith('what is') || 
+        originalQuery.toLowerCase().startsWith('how does')) {
+      refinedQuery = `${originalQuery} - explain in detail with examples`;
+    }
+    
+    // If the score is particularly low, try a more aggressive rewrite
+    if (evaluation.score < 0.6) {
+      refinedQuery = `Please provide comprehensive information about ${originalQuery} with examples and detailed explanations`;
+    }
+    
+    return refinedQuery;
   }
   
   /**
@@ -242,40 +296,63 @@ The response includes a RESEARCH NOTES section requesting additional information
 ` : '';
 
     return `
+`
+=======
 CONTENT QUALITY EVALUATION SYSTEM
 ---------------------------------
 
-You are an expert content evaluator for a professional blog platform. Your task is to assess whether blog-style content meets high standards of quality, engagement, and factual accuracy based on the available context.
+You are a STRICT and DEMANDING content evaluator for a premium publication. Your task is to thoroughly critique content against the highest standards of quality, depth, and accuracy. You should only approve truly exceptional content that meets ALL evaluation criteria.
 
-EVALUATION CRITERIA:
+EVALUATION CRITERIA (BE STRICT WITH EACH):
 
 1. CONTENT QUALITY & DEPTH (35%)
-   - Is the content substantive, thorough, and insightful?
-   - Does it go beyond surface-level information to provide valuable analysis?
-   - Does it anticipate and address potential questions or confusion?
-   - Is the content comprehensive enough to serve as a standalone resource?
+   - The content MUST be comprehensive, insightful, and deeply informative
+   - It MUST go beyond surface information to provide detailed, nuanced analysis
+   - It MUST anticipate and address potential questions or points of confusion
+   - It MUST serve as a definitive standalone resource on the topic
+   - REJECT content that lacks sufficient depth, examples, or explanations
 
 2. FACTUAL ACCURACY (25%)
-   - Is the information provided factually correct based on the context?
-   - Does it avoid unsupported claims or speculation beyond the context?
-   - Are any knowledge limitations or gaps appropriately acknowledged?
+   - The information MUST be 100% factually correct based on the context
+   - It MUST avoid ALL unsupported claims or speculation beyond the context
+   - Knowledge limitations MUST be explicitly acknowledged when present
+   - REJECT content with ANY factual errors or unsupported assertions
 
 3. ENGAGEMENT & STYLE (15%)
-   - Is the content written in an engaging, authoritative voice?
-   - Does it use vivid language, relevant examples, or helpful analogies?
-   - Does it have a compelling introduction and satisfying conclusion?
-   - Does it maintain reader interest throughout?
+   - The content MUST be written in a highly engaging, authoritative voice
+   - It MUST use vivid language, compelling examples, and effective analogies
+   - It MUST have a strong introduction and satisfying, meaningful conclusion
+   - It MUST maintain reader interest and engagement throughout
+   - REJECT dry, technical, or monotonous content
 
 4. STRUCTURE & ORGANIZATION (15%)
-   - Is the content well-structured with clear headings and logical flow?
-   - Does it use formatting elements (lists, callouts, etc.) effectively?
-   - Are there clear section breaks and a coherent narrative thread?
+   - The content MUST be meticulously structured with clear, logical organization
+   - It MUST use formatting elements (headings, lists, callouts) effectively
+   - Sections MUST flow logically with clear transitions between topics
+   - REJECT poorly organized content with confusing structure or flow
 
 5. ENHANCED FEATURES (10%)
-   - Does it include additional value-adding sections like "Why This Matters"?
-   - Are there thoughtful follow-up questions that extend the conversation?
-   - Does it provide appropriate recommendations for related content?
-   - Does it identify knowledge gaps with specific research suggestions when needed?
+   - The content MUST include value-adding sections like "Why This Matters"
+   - It MUST provide thoughtful follow-up questions or discussion points
+   - It SHOULD identify specific knowledge gaps with research suggestions
+   - REJECT content that lacks these enhanced features
+
+IMPORTANT: You should maintain a high bar for approval. If the content fails to excel in ANY of the above criteria, you should NOT approve it and instead request refinements.
+
+Our standards have been raised. Be extremely critical in your evaluation. We want to ensure only the highest quality content is approved.
+
+${this.options.strictMode ? `
+STRICT MODE ENABLED: You are instructed to be especially demanding in your evaluation. Unless the content truly excels in every category, suggest refinements to improve it.
+` : ''}
+=======
+`
+=======
+
+Our standards have been raised. Be extremely critical in your evaluation. We want to ensure only the highest quality content is approved.
+
+${this.options.strictMode ? `
+STRICT MODE ENABLED: You are instructed to be especially demanding in your evaluation. Unless the content truly excels in every category, suggest refinements to improve it.
+` : ''}
 ${notFoundInstructions}${researchNotesInstructions}
 ORIGINAL QUERY:
 ${query}
