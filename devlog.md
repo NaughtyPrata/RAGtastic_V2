@@ -1,5 +1,21 @@
 # Development Log
 
+## 2025-04-28: Added Iteration Count Display
+
+### Completed Tasks
+
+- [x] Added iteration count display to the confidence banner
+- [x] Shows how many rounds of processing occurred through the agent workflow
+- [x] Styled iteration counter to complement confidence score
+- [x] Updated confidence banner to use a flex layout for better positioning
+
+### Implementation Details
+
+- Displays iterations as "ITERATIONS: X/Y" where X is the actual count and Y is max attempts
+- Used Vault-Tec yellow color to distinguish from confidence score
+- Positioned on the right side of the confidence banner
+- Provides users with transparency about processing complexity
+
 ## 2025-04-28: Added Confidence Score Display
 
 ### Completed Tasks

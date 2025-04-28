@@ -1,5 +1,5 @@
 /**
- * Test script for confidence score display
+ * Test script for confidence score and iteration count display
  */
 
 const axios = require('axios');
@@ -8,8 +8,8 @@ const axios = require('axios');
 const baseUrl = 'http://localhost:3002/api';
 const testQuery = "What are the key components of a good argument according to the book?";
 
-async function testConfidenceScore() {
-  console.log('Testing confidence score display with query:', testQuery);
+async function testConfidenceAndIterations() {
+  console.log('Testing confidence score and iteration count with query:', testQuery);
   
   try {
     // Test with complete RAG flow (including CriticAgent)
@@ -25,11 +25,16 @@ async function testConfidenceScore() {
     
     const result = response.data;
     
-    // Check if confidence banner is included
+    // Check if confidence banner and iteration count are included
     const hasConfidenceBanner = result.response.includes('CONFIDENCE:') && 
                                result.response.includes('confidence-score');
+    const hasIterationCount = result.response.includes('ITERATIONS:') && 
+                             result.response.includes('iteration-count');
     
-    console.log('Response received with confidence score:', hasConfidenceBanner);
+    console.log('Response received with:');
+    console.log('- Confidence score:', hasConfidenceBanner ? '✓' : '✗');
+    console.log('- Iteration count:', hasIterationCount ? '✓' : '✗');
+    
     console.log('\nFirst 300 characters of response:');
     console.log(result.response.substring(0, 300));
     
@@ -37,13 +42,14 @@ async function testConfidenceScore() {
     console.log('- Score:', result.evaluation?.score);
     console.log('- Approved:', result.evaluation?.approved);
     console.log('- Attempts:', result.evaluation?.attempts);
+    console.log('- Max Attempts:', result.evaluation?.maxAttempts);
     
-    console.log('\nVerify in the UI that the confidence score is displayed prominently at the top of the response.');
+    console.log('\nVerify in the UI that both the confidence score and iteration count are displayed in the confidence banner.');
     
   } catch (error) {
-    console.error('Error testing confidence score:', error.message);
+    console.error('Error testing features:', error.message);
   }
 }
 
 // Execute the test
-testConfidenceScore();
+testConfidenceAndIterations();

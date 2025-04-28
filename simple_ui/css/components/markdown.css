@@ -70,10 +70,19 @@
     padding: 0.4em 0.8em;
     font-style: normal;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .message-content .confidence-score {
     color: var(--vault-green-bright);
+    font-weight: bold;
+    margin-right: 1em;
+}
+
+.message-content .iteration-count {
+    color: var(--vault-yellow);
     font-weight: bold;
 }
 

@@ -859,8 +859,11 @@ app.post('/api/rag/complete', async (req, res) => {
       // Format score as percentage
       const confidenceScore = Math.round(latestEvaluation.score * 100);
       
-      // Add confidence banner at the beginning of the response with CSS classes
-      const confidenceBanner = `<div class="confidence-banner"><span class="confidence-score">CONFIDENCE: ${confidenceScore}%</span></div>\n\n`;
+      // Add confidence banner with iteration count at the beginning of the response
+      const confidenceBanner = `<div class="confidence-banner">
+<span class="confidence-score">CONFIDENCE: ${confidenceScore}%</span>
+<span class="iteration-count">ITERATIONS: ${attempts}/${criticAgent.options.maxAttempts}</span>
+</div>\n\n`;
       finalResponse = confidenceBanner + finalResponse;
     }
     
