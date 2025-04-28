@@ -860,9 +860,10 @@ app.post('/api/rag/complete', async (req, res) => {
       const confidenceScore = Math.round(latestEvaluation.score * 100);
       
       // Add confidence banner with iteration count at the beginning of the response
+      // Note: attempts is 0-indexed, so we add 1 for display
       const confidenceBanner = `<div class="confidence-banner">
 <span class="confidence-score">CONFIDENCE: ${confidenceScore}%</span>
-<span class="iteration-count">ITERATIONS: ${attempts}/${criticAgent.options.maxAttempts}</span>
+<span class="iteration-count">ITERATIONS: ${attempts + 1}/${criticAgent.options.maxAttempts}</span>
 </div>\n\n`;
       finalResponse = confidenceBanner + finalResponse;
     }
