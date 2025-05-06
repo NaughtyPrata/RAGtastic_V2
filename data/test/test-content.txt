@@ -1,0 +1,20 @@
+# sRAG - Simple RAG System with PDF Vision & FAISS
+
+A complete RAG (Retrieval Augmented Generation) system with PDF-to-image conversion, GPT-4o vision analysis, and FAISS vector search.
+
+## Overview
+
+This project implements a full RAG system with the following components:
+
+1. **PDF Processing**: Convert PDFs to images for better accuracy
+2. **Vision Analysis**: Analyze PDF images using GPT-4o vision
+3. **FAISS Vector Database**: Efficient semantic search for document retrieval
+4. **Retrieval Agent**: Smart document retrieval combining semantic and keyword search
+5. **UI**: Clean, retro-inspired user interface for interacting with the system
+
+## Features
+
+- **PDF-to-Image Conversion**: Convert PDFs to high-quality images for detailed analysis
+- **GPT-4o Vision Analysis**: Extract text and understand document structure with AI vision
+- **FAISS Vector Search**: Fast and efficient semantic search using FAISS
+- **Hybrid Retrieval**: Combines vector search with traditional keyword-based approaches

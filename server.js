@@ -37,10 +37,12 @@ app.use(express.static(path.join(__dirname, 'simple_ui')));
 
 // Import API handlers
 const { listDocuments, preprocessDocuments } = require('./src/api/documents');
+const vectordbRoutes = require('./src/api/routes/vectordbRoutes');
 
 // API routes
 app.get('/api/documents', listDocuments);
 app.post('/api/documents/preprocess', preprocessDocuments);
+app.use('/api/vectordb', vectordbRoutes);
 
 // System management endpoints
 app.post('/api/system/reset', async (req, res) => {

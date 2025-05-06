@@ -1,28 +1,68 @@
-# sRAG - Simple RAG Interface Demo
+# sRAG - Simple RAG System with PDF Vision & FAISS
 
-A clean, retro-inspired user interface for Retrieval Augmented Generation systems with a Fallout/Vault-Tec aesthetic.
+A complete RAG (Retrieval Augmented Generation) system with PDF-to-image conversion, GPT-4o vision analysis, and FAISS vector search.
 
 ## Overview
 
-This project provides a standalone UI demonstration for RAG (Retrieval Augmented Generation) systems. The interface simulates document processing, querying, and displaying results in a stylized terminal-like environment.
+This project implements a full RAG system with the following components:
+
+1. **PDF Processing**: Convert PDFs to images for better accuracy
+2. **Vision Analysis**: Analyze PDF images using GPT-4o vision
+3. **FAISS Vector Database**: Efficient semantic search for document retrieval
+4. **Retrieval Agent**: Smart document retrieval combining semantic and keyword search
+5. **UI**: Clean, retro-inspired user interface for interacting with the system
 
 ## Features
 
-- **Document Selection and Processing**: Select documents from a list and simulate preprocessing
-- **Query Interface**: Submit questions with different retrieval options
-- **Conversation View**: View AI responses in a chat-like interface
-- **System Monitor**: View system statistics and status
-- **Agent Network Visualization**: Interactive visualization of the underlying agent system
-- **Retro Terminal Design**: CRT-style interface with scan lines and visual effects
+- **PDF-to-Image Conversion**: Convert PDFs to high-quality images for detailed analysis
+- **GPT-4o Vision Analysis**: Extract text and understand document structure with AI vision
+- **FAISS Vector Search**: Fast and efficient semantic search using FAISS
+- **Hybrid Retrieval**: Combines vector search with traditional keyword-based approaches
+- **API Endpoints**: Full REST API for document processing and queries
+- **UI**: Retro-inspired interface with chat-like interaction
+- **Extensible Architecture**: Modular design for easy customization
 
 ## Getting Started
 
 1. Clone the repository
-2. Navigate to the project directory
-3. Start the UI with:
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file with your OpenAI API key:
+
+```
+OPENAI_API_KEY=your-api-key-here
+```
+
+4. Start the server:
+
+```bash
+npm start
+```
+
+5. Start the UI:
 
 ```bash
 ./start_ui.sh
+```
+
+## Processing Documents
+
+To process a PDF document:
+
+```bash
+node test-faiss-integration.js path/to/your/document.pdf
+```
+
+## Testing the RAG System
+
+Test the complete retrieval pipeline:
+
+```bash
+node test-retrieval-agent.js path/to/your/document.pdf "Your query here"
 ```
 
 ## UI Structure
@@ -59,14 +99,48 @@ The interface consists of three main panels:
 
 - **images/**: Contains the logo and icons
 
+## System Architecture
+
+The system is composed of several key components:
+
+### Document Processing Pipeline
+
+1. **PDF Processor**: Converts PDFs to images using PDF.js
+2. **Vision Analyzer**: Processes images with GPT-4o vision API
+3. **Document Processor**: Handles chunking and metadata extraction
+
+### Vector Database
+
+1. **FAISS Provider**: Core vector search implementation
+2. **Vector Manager**: Manages index creation and updates
+3. **Embedding Provider**: Generates embeddings using OpenAI API
+
+### Retrieval System
+
+1. **Retriever Agent**: Coordinates search across sources
+2. **FAISS Retriever**: Specialized retrieval from vector database
+3. **Hybrid Search**: Combines multiple retrieval methods
+
+## API Endpoints
+
+The system exposes several REST API endpoints:
+
+- `POST /api/vectordb/process-vision`: Process vision results into FAISS
+- `POST /api/vectordb/search`: Search the vector database
+- `GET /api/vectordb/stats`: Get vector database statistics
+- `DELETE /api/vectordb/documents`: Delete documents from the database
+
 ## Customization
 
-The interface uses CSS variables for theming, defined in `theme.css`. To modify the appearance:
+The system is designed to be highly customizable:
 
-1. Edit color variables in `theme.css`
-2. Adjust component-specific styles in their respective CSS files
-3. Update layout properties in `layout.css`
+1. **Chunking Strategies**: Adjust chunking parameters in DocumentProcessor
+2. **Vector Search**: Configure FAISS parameters in FaissProvider
+3. **Embedding Models**: Change embedding models in OpenAIEmbeddingProvider
+4. **UI Appearance**: Modify CSS variables in theme.css
 
-## Notes
+## Requirements
 
-This is a demonstration UI only - the backend functionality is simulated with mock responses.
+- Node.js 14+
+- OpenAI API key
+- At least 4GB RAM for FAISS operations

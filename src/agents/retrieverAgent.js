@@ -1,13 +1,13 @@
 /**
  * RetrieverAgent for sRAG system
- * Fallout Vault-Tec themed RAG implementation
  * 
- * Responsible for retrieving relevant context from documents
+ * Responsible for retrieving relevant context from documents using FAISS vector database
  */
 
 const fs = require('fs').promises;
 const path = require('path');
 const fsSync = require('fs');
+const FaissRetriever = require('./retrievers/faissRetriever');
 
 // Initialize logger
 function log(message) {
@@ -16,20 +16,35 @@ function log(message) {
 
 /**
  * RetrieverAgent class
- * Retrieves relevant context from processed documents
+ * Retrieves relevant context from documents using FAISS and/or local search
  */
 class RetrieverAgent {
   constructor(options = {}) {
     this.options = {
       chunksDir: path.join(process.cwd(), 'data', 'chunks'),
+      vectorDbDir: path.join(process.cwd(), 'data', 'vectordb'),
       maxResults: options.numResults || 10,
       similarityThreshold: options.similarityThreshold || 0.3,
       useHybridSearch: options.useHybridSearch !== false,
+      useFaiss: options.useFaiss !== false,
+      embeddingModel: options.embeddingModel || 'text-embedding-3-small',
       verbose: options.verbose || false,
+      debug: options.verbose || false,
       ...options
     };
     
-    this.log(`RetrieverAgent initialized. Chunks directory: ${this.options.chunksDir}`);
+    // Initialize FAISS retriever if enabled
+    if (this.options.useFaiss) {
+      this.faissRetriever = new FaissRetriever({
+        vectorDbDir: this.options.vectorDbDir,
+        embeddingModel: this.options.embeddingModel,
+        numResults: this.options.maxResults,
+        similarityThreshold: this.options.similarityThreshold,
+        debug: this.options.debug
+      });
+    }
+    
+    this.log(`RetrieverAgent initialized. Using FAISS: ${this.options.useFaiss}`);
   }
   
   /**
@@ -143,8 +158,51 @@ class RetrieverAgent {
     try {
       this.log(`Retrieving context for query: "${query}"`);
       
-      // Get context from processed documents
-      const context = await this.getContextForQuery(query);
+      let context = '';
+      
+      // Use FAISS if enabled
+      if (this.options.useFaiss) {
+        try {
+          // Initialize FAISS retriever if not already done
+          if (!this.faissRetriever.initialized) {
+            await this.faissRetriever.initialize();
+          }
+          
+          // Get context from FAISS
+          const faissResults = await this.faissRetriever.retrieveContext(query, {
+            numResults: this.options.maxResults,
+            similarityThreshold: this.options.similarityThreshold
+          });
+          
+          if (faissResults && faissResults.context) {
+            context = faissResults.context;
+            this.log(`Retrieved ${faissResults.results.length} context chunks from FAISS`);
+          } else {
+            this.log('No results from FAISS, falling back to file-based search');
+          }
+        } catch (error) {
+          this.log(`Error retrieving from FAISS: ${error.message}`);
+          this.log('Falling back to file-based search');
+        }
+      }
+      
+      // Fall back to file-based search if no results from FAISS or if hybrid search is enabled
+      if ((!context || context.trim() === '') || this.options.useHybridSearch) {
+        this.log('Using file-based search for context');
+        
+        // Get context from processed documents
+        const fileContext = await this.getContextForQuery(query);
+        
+        if (fileContext && fileContext.trim() !== '') {
+          // If hybrid search, combine results
+          if (context && context.trim() !== '') {
+            this.log('Combining FAISS and file-based search results');
+            context = `${context}\n\n${fileContext}`;
+          } else {
+            context = fileContext;
+          }
+        }
+      }
       
       // Add metadata as additional context
       const metadataContext = await this.getDocumentMetadata();
