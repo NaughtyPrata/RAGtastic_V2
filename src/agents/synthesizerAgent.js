@@ -3,16 +3,12 @@
  * Transforms raw contexts into coherent narratives
  */
 
-const { Groq } = require('groq-sdk');
 const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
 
-// Initialize Groq client
-const groqClient = new Groq({
-  apiKey: process.env.GROQ_API_KEY 
-});
+// No external LLM client initialized
 
 // Initialize logger
 function log(message) {
@@ -58,36 +54,59 @@ class SynthesizerAgent {
     this.log(`Context length: ${context?.length || 0} characters`);
     
     try {
-      // Create system message for synthesis
+      // Create system message for synthesis (for future implementation)
       const systemMessage = this.createSynthesisPrompt(context, query);
       
-      // Prepare messages for Groq
-      const messages = [
-        { role: 'system', content: systemMessage },
-        { role: 'user', content: query }
-      ];
+      // Since we've removed Groq, we're implementing a temporary placeholder synthesis
+      this.log(`Using placeholder synthesis (Groq has been removed)`);
       
-      // Call Groq LLM
-      const completion = await groqClient.chat.completions.create({
-        model: this.options.model,
-        messages: messages,
-        temperature: this.options.temperature,
-        max_tokens: this.options.maxTokens,
-        top_p: this.options.topP,
-        stream: false
-      });
+      // Extract key sections from context to simulate a synthesized response
+      let response = '';
       
-      // Extract response
-      const response = completion.choices[0].message.content;
-      this.log(`Successfully synthesized response (${response.length} characters)`);
+      if (!context || context.trim() === '') {
+        response = `I'm sorry, but I don't have enough information to answer your question about "${query}". The knowledge base doesn't contain relevant information on this topic.`;
+      } else {
+        // Extract title from query
+        const title = query.charAt(0).toUpperCase() + query.slice(1);
+        
+        // Create a basic synthesized response with information from the context
+        response = `# ${title}\n\n`;
+        
+        // Extract a few relevant sentences from context
+        const sentences = context.split(/[.!?]\s+/);
+        const relevantSentences = sentences.filter(sentence => 
+          sentence.toLowerCase().includes(query.toLowerCase()) ||
+          query.toLowerCase().split(' ').some(word => sentence.toLowerCase().includes(word))
+        ).slice(0, 5);
+        
+        if (relevantSentences.length > 0) {
+          response += "## Key Information\n\n";
+          response += relevantSentences.join(". ") + ".\n\n";
+        } else {
+          // If no relevant sentences found, use the first few sentences
+          response += "## Available Information\n\n";
+          response += sentences.slice(0, 5).join(". ") + ".\n\n";
+        }
+        
+        // Add a conclusion
+        response += "## Summary\n\n";
+        response += `Based on the available information, this is what we know about "${query}". The system is currently being upgraded to provide more detailed and nuanced responses in the future.`;
+      }
+      
+      this.log(`Successfully synthesized placeholder response (${response.length} characters)`);
       
       return {
         response,
-        usage: completion.usage
+        usage: null
       };
     } catch (error) {
       this.log(`Error synthesizing response: ${error.message}`);
-      throw error;
+      
+      // Return a fallback response
+      return {
+        response: `I'm currently unable to provide a detailed answer due to system updates. Please try again later.`,
+        usage: null
+      };
     }
   }
   

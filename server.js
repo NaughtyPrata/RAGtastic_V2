@@ -6,7 +6,6 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { Groq } = require('groq-sdk');
 const fs = require('fs');
 
 // Import Agents
@@ -22,10 +21,7 @@ function log(message) {
   console.log(`[${new Date().toISOString()}] ${message}`);
 }
 
-// Initialize Groq client
-const groqClient = new Groq({
-  apiKey: process.env.GROQ_API_KEY 
-});
+// No external LLM client initialized
 
 // Create Express app
 const app = express();
@@ -181,7 +177,7 @@ app.post('/api/synthesizer/query', async (req, res) => {
   }
 });
 
-// RAG query endpoint using Groq
+// RAG query endpoint - placeholder for future implementation
 app.post('/api/retriever/query', async (req, res) => {
   try {
     const { query, options = {} } = req.body;
@@ -203,37 +199,13 @@ app.post('/api/retriever/query', async (req, res) => {
     const metadataContext = await getDocumentMetadata();
     const combinedContext = metadataContext ? `${metadataContext}\n\n${context}` : context;
     
-    // Create system message
-    const systemMessage = createSystemMessage(combinedContext, query);
-    
-    // Use Groq for completion
-    const messages = [
-      { role: 'system', content: systemMessage },
-      { role: 'user', content: query }
-    ];
-    
-    const completion = await groqClient.chat.completions.create({
-      model: options.model || "llama3-8b-8192",
-      messages: messages,
-      temperature: options.temperature || 0.7,
-      max_tokens: options.maxTokens || 1024,
-      top_p: options.topP || 1.0,
-      stream: false
-    });
-    
-    // Extract response
-    const response = completion.choices[0].message.content;
-    
-    // Apply post-processing filter to catch any remaining roleplay elements
-    const filteredResponse = removeRoleplayElements(response);
-    
+    // Return temporary message until new implementation is added
     return res.json({
       success: true,
       query,
-      response: filteredResponse,
+      response: "The retrieval endpoint is currently being upgraded. Please use the synthesizer endpoint instead.",
       context: combinedContext ? `Context used (${combinedContext.length} chars)` : 'No context found',
-      sources: [],
-      usage: completion.usage
+      sources: []
     });
   } catch (error) {
     log(`Error processing RAG query: ${error.message}`);

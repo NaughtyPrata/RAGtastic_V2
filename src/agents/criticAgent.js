@@ -3,16 +3,12 @@
  * Evaluates synthesis quality and determines next steps
  */
 
-const { Groq } = require('groq-sdk');
 const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
 
-// Initialize Groq client
-const groqClient = new Groq({
-  apiKey: process.env.GROQ_API_KEY 
-});
+// No external LLM client initialized
 
 // Initialize logger
 function log(message) {
@@ -65,115 +61,46 @@ class CriticAgent {
       // Create system message for evaluation
       const systemMessage = this.createEvaluationPrompt(query, response, context);
       
-      // Prepare messages for Groq
-      const messages = [
-        { role: 'system', content: systemMessage },
-        { role: 'user', content: "Evaluate this response" }
-      ];
+      // Since we've removed Groq, we're implementing a temporary placeholder evaluation
+      // This will automatically approve responses after checking basic criteria
+      this.log(`Using placeholder evaluation (Groq has been removed)`);
       
-      // Call Groq LLM
-      // Check if model supports response_format
-      const supportsResponseFormat = [
-        "claude-3-opus-20240229",
-        "claude-3-sonnet-20240229",
-        "claude-3-haiku-20240307",
-        "gpt-4-turbo",
-        "gpt-4-0125-preview",
-        "gpt-4-1106-preview",
-        "gpt-4",
-        "gpt-3.5-turbo-0125",
-        "gpt-3.5-turbo-1106"
-      ].includes(this.options.model);
-      
-      // Create completion options
-      const completionOptions = {
-        model: this.options.model,
-        messages: messages,
-        temperature: this.options.temperature,
-        max_tokens: this.options.maxTokens,
-        top_p: this.options.topP,
-        stream: false
+      // Simulate an evaluation result
+      const evaluationResult = {
+        score: 0.9,
+        approved: true,
+        reasoning: "Placeholder evaluation - automatic approval until new LLM integration is implemented.",
+        refinedQuery: "None needed"
       };
       
-      // Add response_format only for supported models
-      if (supportsResponseFormat) {
-        completionOptions.response_format = { type: "json" };
-      }
-      
-      // Call Groq LLM
-      const completion = await groqClient.chat.completions.create(completionOptions);
-      
-      // Extract evaluation result
-      const evaluationResultText = completion.choices[0].message.content;
-      
-      // Parse response which may be either JSON or text
-      let evaluationResult;
-      
-      try {
-        // First try to parse as JSON
-        evaluationResult = JSON.parse(evaluationResultText);
-      } catch (parseError) {
-        this.log(`Response is not in JSON format, attempting to extract values from text`);
-        this.log(`Raw evaluation result: ${evaluationResultText}`);
-        
-        // Extract data from text using regex patterns
-        const scoreMatch = evaluationResultText.match(/\*\*SCORE\*\*:\s*([0-9.]+)/i) || 
-                        evaluationResultText.match(/\*\*OVERALL SCORE\*\*:\s*([0-9.]+)/i) ||
-                        evaluationResultText.match(/score:\s*([0-9.]+)/i);
-        
-        const approvedMatch = evaluationResultText.match(/\*\*APPROVED\*\*:\s*(true|false)/i) ||
-                          evaluationResultText.match(/approved:\s*(true|false)/i);
-        
-        const reasoningMatch = evaluationResultText.match(/\*\*REASONING\*\*:\s*([^\n]+)/i) ||
-                           evaluationResultText.match(/reasoning:\s*([^\n]+)/i);
-        
-        const refinedQueryMatch = evaluationResultText.match(/\*\*REFINED QUERY\*\*:\s*([^\n]+)/i) ||
-                               evaluationResultText.match(/refined query:\s*([^\n]+)/i);
-        
-        // Create result object from extracted data
-        evaluationResult = {
-          score: scoreMatch ? parseFloat(scoreMatch[1]) : 0.7,
-          approved: approvedMatch ? approvedMatch[1].toLowerCase() === 'true' : false,
-          reasoning: reasoningMatch ? reasoningMatch[1].trim() : "Extracted from text evaluation",
-          refinedQuery: refinedQueryMatch && !refinedQueryMatch[1].toLowerCase().includes('none') ? 
-                      refinedQueryMatch[1].trim() : query
-        };
-        
-        // Handle case where the query is explicitly approved in text
-        if (evaluationResultText.toLowerCase().includes('approved') && 
-            !evaluationResultText.toLowerCase().includes('not approved')) {
-          evaluationResult.approved = true;
-        }
-      }
-      
-      // Ensure all required fields exist
-      evaluationResult.score = evaluationResult.score || 0.5;
-      evaluationResult.approved = evaluationResult.approved || false;
-      evaluationResult.reasoning = evaluationResult.reasoning || "No reasoning provided.";
-      evaluationResult.refinedQuery = evaluationResult.refinedQuery || query;
-      
-      // Apply stricter evaluation in strict mode
-      if (this.options.strictMode) {
-        // Only auto-approve if we've reached the max attempts
-        if (attempts >= this.options.maxAttempts - 1) {
-          evaluationResult.approved = true;
-          evaluationResult.reasoning += " (Max attempts reached - forced approval).";
-        } 
-        // Otherwise, enforce the quality threshold strictly
-        else if (evaluationResult.score < this.options.qualityThreshold) {
-          evaluationResult.approved = false;
-          evaluationResult.reasoning += ` (Strict mode: Score ${evaluationResult.score} below threshold ${this.options.qualityThreshold})`;
-          
-          // If we don't have a refined query yet, create one
-          if (evaluationResult.refinedQuery === query) {
-            evaluationResult.refinedQuery = this.generateRefinedQuery(query, evaluationResult);
-          }
-        }
-      } 
-      // Less strict mode - use original behavior
-      else if (attempts >= this.options.maxAttempts - 1) {
+      // For final attempts, always auto-approve
+      if (attempts >= this.options.maxAttempts - 1) {
         evaluationResult.approved = true;
         evaluationResult.reasoning += " (Max attempts reached - forced approval).";
+      }
+      
+      // Apply very basic quality checks
+      const lowQualityIndicators = [
+        "I don't have enough information",
+        "I don't have access to",
+        "The context does not provide",
+        "I cannot answer",
+        "There is no information",
+        "No relevant information"
+      ];
+      
+      // Check if response contains low quality indicators and context is not empty
+      if (context && context.length > 100) {
+        const hasLowQualityIndicator = lowQualityIndicators.some(indicator => 
+          response.toLowerCase().includes(indicator.toLowerCase())
+        );
+        
+        if (hasLowQualityIndicator && attempts < this.options.maxAttempts - 1) {
+          evaluationResult.approved = false;
+          evaluationResult.score = 0.6;
+          evaluationResult.reasoning = "Response indicates information limitations despite available context.";
+          evaluationResult.refinedQuery = this.generateRefinedQuery(query, evaluationResult);
+        }
       }
       
       // Log evaluation result
@@ -188,8 +115,7 @@ class CriticAgent {
         score: evaluationResult.score,
         approved: evaluationResult.approved,
         reasoning: evaluationResult.reasoning,
-        attempts,
-        usage: completion.usage
+        attempts
       };
     } catch (error) {
       this.log(`Error evaluating response: ${error.message}`);
@@ -201,8 +127,7 @@ class CriticAgent {
         score: 0.5,
         approved: true, // Safe fallback is to approve
         reasoning: `Evaluation error: ${error.message}. Defaulting to approval.`,
-        attempts,
-        usage: null
+        attempts
       };
     }
   }

@@ -6,6 +6,8 @@
 const fs = require('fs').promises;
 const path = require('path');
 const PDFProcessor = require('./formats/pdfProcessor');
+const PDFToImageConverter = require('./formats/pdfToImageConverter');
+const GPT4oAnalyzer = require('./formats/gpt4oAnalyzer');
 const crypto = require('crypto');
 
 /**
@@ -34,6 +36,22 @@ class DocumentProcessor {
       debug: this.options.debug
     });
     
+    // Initialize PDF to image converter
+    this.pdfToImageConverter = new PDFToImageConverter({
+      ...options,
+      debug: this.options.debug,
+      outputDir: options.imageOutputDir || path.join(process.cwd(), 'temp', 'images')
+    });
+    
+    // Initialize GPT-4o analyzer if API key is available
+    if (process.env.OPENAI_API_KEY) {
+      this.gpt4oAnalyzer = new GPT4oAnalyzer({
+        ...options,
+        debug: this.options.debug,
+        apiKey: process.env.OPENAI_API_KEY
+      });
+    }
+    
     this.initialized = false;
     this.log('DocumentProcessor created');
   }
@@ -53,6 +71,128 @@ class DocumentProcessor {
       return true;
     } catch (error) {
       console.error(`DocumentProcessor initialization failed: ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Convert PDF to images
+   * @param {string} pdfPath - Path to PDF file
+   * @param {Object} options - Conversion options
+   * @returns {Array<string>} - Array of image paths
+   */
+  async convertPdfToImages(pdfPath, options = {}) {
+    this.log(`Converting PDF to images: ${pdfPath}`);
+    
+    try {
+      if (!this.initialized) {
+        await this.initialize();
+      }
+      
+      // Merge options
+      const conversionOptions = {
+        ...this.options,
+        ...options
+      };
+      
+      // Get full path if it's a relative path
+      let fullPath = pdfPath;
+      if (!path.isAbsolute(pdfPath)) {
+        fullPath = path.join(this.options.documentsDir, pdfPath);
+      }
+      
+      // Convert PDF to images
+      const imagePaths = await this.pdfToImageConverter.convertToImages(fullPath, conversionOptions);
+      
+      this.log(`PDF converted to ${imagePaths.length} images`);
+      return imagePaths;
+    } catch (error) {
+      console.error(`Error converting PDF to images: ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Process PDF with GPT-4o vision analysis
+   * @param {string} pdfPath - Path to PDF file
+   * @param {Object} options - Processing options
+   * @returns {Object} - Analysis results with images and text content
+   */
+  async processPdfWithVision(pdfPath, options = {}) {
+    this.log(`Processing PDF with GPT-4o vision: ${pdfPath}`);
+    
+    try {
+      if (!this.initialized) {
+        await this.initialize();
+      }
+      
+      if (!this.gpt4oAnalyzer) {
+        throw new Error('GPT-4o analyzer not available. Check if OpenAI API key is set.');
+      }
+      
+      // Merge options
+      const processingOptions = {
+        ...this.options,
+        ...options
+      };
+      
+      // First convert PDF to images
+      const imagePaths = await this.convertPdfToImages(pdfPath, processingOptions);
+      
+      if (!imagePaths.length) {
+        throw new Error('No images were generated from PDF');
+      }
+      
+      // Analyze images with GPT-4o
+      this.log(`Analyzing ${imagePaths.length} PDF page images with GPT-4o...`);
+      
+      const visionPrompt = options.visionPrompt || 
+        'Extract all the text content from this document page. ' +
+        'Preserve the structure and layout as much as possible. ' +
+        'Identify headings, paragraphs, bullet points, and any tables or figures.';
+      
+      const analysisResults = await this.gpt4oAnalyzer.analyzeMultipleImages(imagePaths, {
+        prompt: visionPrompt,
+        maxTokens: options.maxTokens || 1000,
+        temperature: options.temperature || 0.2
+      });
+      
+      // Combine results into a comprehensive document
+      const combinedResult = {
+        id: path.basename(pdfPath, '.pdf'),
+        path: pdfPath,
+        pages: analysisResults.map((result, index) => ({
+          pageNumber: index + 1,
+          imagePath: imagePaths[index],
+          analysis: result.text,
+          metadata: result.metadata
+        })),
+        content: analysisResults.map(r => r.text).join('\n\n==== PAGE BREAK ====\n\n'),
+        metadata: {
+          totalPages: imagePaths.length,
+          processedWith: 'GPT-4o Vision',
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+      // Optional: Save the results to a JSON file
+      if (options.saveResults) {
+        const outputPath = path.join(
+          options.outputDir || path.join(process.cwd(), 'data', 'vision_results'),
+          `${path.basename(pdfPath, '.pdf')}_vision_analysis.json`
+        );
+        
+        await this.ensureDirectoryExists(path.dirname(outputPath));
+        await fs.writeFile(outputPath, JSON.stringify(combinedResult, null, 2), 'utf8');
+        
+        this.log(`Vision analysis results saved to ${outputPath}`);
+        combinedResult.outputPath = outputPath;
+      }
+      
+      this.log(`PDF vision analysis completed for ${pdfPath}`);
+      return combinedResult;
+    } catch (error) {
+      console.error(`Error processing PDF with vision: ${error.message}`);
       throw error;
     }
   }
